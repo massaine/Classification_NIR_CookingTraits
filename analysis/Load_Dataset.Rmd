@@ -1,0 +1,65 @@
+---
+title: "Load_Dataset"
+author: "massaine"
+date: "2022-11-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Load Spectral and Phenotype data
+### Data struture:
+### Trial, plot_name, acession_name, Plot, Block, Cook15, Cook20, Cook25, Cook30, Cook40, + Spectra data
+   
+```{r}
+Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
+
+# DADOS NIR ASD
+dados2020 <- read.table(file=here::here("data","2020-DadosNIRASD_fen_BR.PYTGS.19.txt"), header=T, sep="\t", na.strings="NA", strip.white=TRUE, check.names=FALSE)
+dados2020 <- dados2020[!is.na(dados2020$`350`),]
+dados2020 <- cbind(dados2020[,c("Trial","plot_name",
+                                "accession_name",
+                                "plot_number",
+                                "block_number",
+                                Cooking_traits,"Type")],
+                                dados2020[21:ncol(dados2020)])
+
+
+dados2021 <- read.table(file=here::here("data","2021-DadosNIRASD_Cook.txt"), header=T, sep="\t", na.strings="NA",
+                        strip.white=TRUE, check.names=FALSE)
+dados2021 <- cbind(dados2021[,c("Trial","plot_name",
+                                "accession_name",
+                                "plot_number",
+                                "block_number",
+                                Cooking_traits,"Type")],
+                                dados2021[14:ncol(dados2021)])
+levels(as.factor(dados2021$Trial))
+dir(here::here("data"))
+
+
+
+# DADOS Trial 9 e 10
+dados2 <- read.table("3-DadosNIRASD_fen_BR.CETBAG.19.UFRB_BR.CETBAGRec.19.UFRB_2.txt", header=T, sep="\t", na.strings="NA", strip.white=TRUE, check.names=FALSE)
+dados2 <- dados2[!is.na(dados2$`350`),]
+colnames(dados2)[4] <- "Trial"
+dados2 <- cbind(dados2[,c("Trial","plot_name","accession_name",trait,"Type")],dados2[27:ncol(dados2)])
+
+# DADOS Trial 2021
+dados3 <- read.table("6-Cook_DadosNIRASD_fen_Colheita21.txt", header=T, sep="\t", na.strings="NA", strip.white=TRUE, check.names=FALSE)
+dados3 <- dados3[!is.na(dados3$`350`),]
+head(dados3)[1:20]
+dados3 <- cbind(dados3[,c("Trial","plot_name","accession_name",trait,"Type")],dados3[14:ncol(dados3)])
+
+
+```
+
+
+
+
+```{r}
+amostra <- "Mashed"
+```
+
+
+
+
