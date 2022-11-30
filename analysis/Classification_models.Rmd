@@ -13,3 +13,60 @@ editor_options:
 
 ```
 
+###load data
+```{r}
+NIR <- "ASD"
+load(file=here::here("output","dadosASD_Mas_PT.RData"))
+```
+
+### test using PLS model
+```{r}
+ctrl <- trainControl(method="repeatedcv",repeats = 5,
+                     summaryFunction=twoClassSummary, 
+                     classProbs=T, savePredictions = T,
+                     verboseIter = FALSE,returnResamp = "all") 
+```
+
+
+```{r}
+trait <- Cooking_traits[1]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  training <- list()
+  training1 <- list()
+  testing <- list()
+  index <- list()
+  modelFit1 <- list()
+  training2 <- list()
+  
+  dados <- dados2[[j]]
+  
+for (i in 1:5) {
+  set.seed(i)
+  index[[i]] <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training[[i]] <- dados[index[[i]], ]
+  testing[[i]] <- dados[-index[[i]], ]
+  
+  OvSam <- subset(training[[i]],training[[i]][,trait]=="Yes")
+  
+  Ns <- round(table(training[[i]][,trait])[1]) - (nrow(OvSam)*26) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+  training1[[i]] <- rbind(training[[i]],x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1[[i]]$Cook15)
+  
+  training2[[i]] <- cbind(training1[[i]][,trait],
+                          training1[[i]][,c(13:ncol(training1[[i]]))])
+  colnames(training2[[i]])[1] <- trait
+  
+  set.seed(2304)
+  modelFit1[[i]] <- train(Cook15 ~ ., data = training2[[i]], 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"))
+  }
+modelFit2[[j]] <- modelFit1[[i]]
+}
+
+```
+

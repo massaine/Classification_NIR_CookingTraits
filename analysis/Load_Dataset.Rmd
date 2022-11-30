@@ -13,6 +13,7 @@ editor_options:
    
 ```{r}
 library(dplyr)
+library(stringr)
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 ```
    
@@ -77,7 +78,27 @@ dados$accession_name <- recode(dados$accession_name,
 dados$Type <- as.factor(dados$Type)
 levels(as.factor(dados$Type))  
 levels(dados$Type) <- c("Fresh Root","Mashed","Mashed")
+```
 
+### creating multi classes trait ASD
+```{r}
+dados1 <- dados[,Cooking_traits]
+dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
+dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
+dados1$Cook25 <- gsub("Yes","25min",dados1$Cook25)
+dados1$Cook30 <- gsub("Yes","30min",dados1$Cook30)
+dados1$Cook40 <- gsub("Yes","40min",dados1$Cook40)
+dados1$Mult6C <- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = "",
+                                 collapse = NULL))
+levels(dados1$Mult6C) <- c("15min","20min","25min","30min","40min","No")
+dados1$Mult4C <- dados1$Mult6C
+levels(dados1$Mult4C) <- c("15min","25min","25min","40min","40min","No")
+dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
+```
+
+### save data
+```{r}
 #save(dados, file = here::here("output", "dadosASD.RData"))
 ```
 
@@ -138,16 +159,34 @@ dados$accession_name <- recode(dados$accession_name,
                                 "BRS-GemaOvo" = "BRS-Gema-de-Ovo",
                                 "Aipim-Brasil" = "Aipim Brasil",
                                 "Aipim-Abacate" = "AipimAbacate")  
+```
 
-#save(dados, file = here::here("output", "dadosBUCHI.RData"))
+### creating multi classes trait BUCHI
+```{r}
+dados1 <- dados[,Cooking_traits]
+dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
+dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
+dados1$Cook25 <- gsub("Yes","25min",dados1$Cook25)
+dados1$Cook30 <- gsub("Yes","30min",dados1$Cook30)
+dados1$Cook40 <- gsub("Yes","40min",dados1$Cook40)
+dados1$Mult6C <- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = "",
+                                 collapse = NULL))
+levels(dados1$Mult6C) <- c("15min","15min","20min","25min","30min","40min","No")
+dados1$Mult4C <- dados1$Mult6C
+levels(dados1$Mult4C) <- c("15min","25min","25min","40min","40min","No")
+dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
+```
 
+
+### Save data BUCHI
+```{r}
+save(dados, file = here::here("output", "dadosBUCHI.RData"))
 ```
 
 
 ## Dados SCIO
 ```{r}
-Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
-
 dados2022<-read.table(file=here::here("data","2022_DadosNIRSCIO_Cook.txt"), 
                       header=T, sep="\t", na.strings="NA",
                       strip.white=TRUE, check.names=FALSE)
@@ -188,10 +227,31 @@ dados$accession_name <- recode(dados$accession_name,
 dados$Type <- as.factor(dados$Type)
 levels(as.factor(dados$Type))  
 levels(dados$Type) <- c("Fresh Root","Mashed","Mashed")
-
-#save(dados, file = here::here("output", "dadosSCIO.RData"))
-
 ```
 
 
+### creating multi classes trait SCIO
+```{r}
+dados1 <- dados[,Cooking_traits]
+dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
+dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
+dados1$Cook25 <- gsub("Yes","25min",dados1$Cook25)
+dados1$Cook30 <- gsub("Yes","30min",dados1$Cook30)
+dados1$Cook40 <- gsub("Yes","40min",dados1$Cook40)
+dados1$Mult6C <- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = "",
+                                 collapse = NULL))
+levels(dados1$Mult6C) <- c("15min","20min","25min","30min","40min","No")
+dados1$Mult4C <- dados1$Mult6C
+levels(dados1$Mult4C) <- c("15min","25min","25min","40min","40min","No")
+dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
+```
+
+
+### SAVE DATA SCIO
+```{r}
+
+save(dados, file = here::here("output", "dadosSCIO.RData"))
+
+```
 

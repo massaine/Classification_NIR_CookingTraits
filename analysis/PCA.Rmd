@@ -10,6 +10,34 @@ editor_options:
 ## Introduction
 
 ```{r}
+load(file = "ASD_Multi_6c_Cook_KNN_Estr2.RData")
+modelname <- "KNN"
+data <- "ASD_Multi_6C"
+
+dim(training1[[1]])
+
+dados1 <- training1[[1]]
+dados1 <- as.data.frame(dados1)
+dados1$Cook <- as.factor(dados1$Cook)
+str(dados1)
+dados1[, c(2:ncol(dados1))] <- sapply(dados1[, c(2:ncol(dados1))], as.numeric)
+
+##################################################################################
+library(ggfortify) # teste
+
+pca1  <- prcomp(dados1[,2:589])
+pca2  <- prcomp(dados1[,590:1179])
+pca3  <- prcomp(dados1[,1180:ncol(dados1)])
+
+# tentar selecionar regioes
+pcaplot <- autoplot(pca1, data = dados1, colour = "Cook") + theme_bw() + scale_colour_manual(values =  rainbow(6))
+pcaplot
+
+pcaplot2 <- autoplot(pca2, data = dados1, colour = "Cook") + theme_bw() + scale_colour_manual(values =  rainbow(6))
+pcaplot2
+
+pcaplot3 <- autoplot(pca3, data = dados1, colour = "Cook") + theme_bw() + scale_colour_manual(values =  rainbow(6))
+pcaplot3
 
 ```
 

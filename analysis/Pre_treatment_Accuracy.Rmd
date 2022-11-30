@@ -1,0 +1,353 @@
+---
+title: "PCA"
+author: "massaine"
+date: "2022-11-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE)
+memory.limit(70000)
+```
+
+
+## Packages
+```{r}
+options(stringsAsFactors=FALSE)
+library(prospectr)
+library(caret)
+library(mlbench)
+library(pROC)
+library(C50)
+library(plsRglm)
+library(stringr)
+library("ROCR")
+library(gt)
+Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
+```
+
+###load data
+```{r}
+NIR <- "ASD"
+load(file=here::here("output","dadosASD_Mas_PT.RData"))
+```
+
+### test using PLS model
+```{r}
+ctrl <- trainControl(method="repeatedcv",repeats = 5,
+                     summaryFunction=twoClassSummary, 
+                     classProbs=T, savePredictions = T,
+                     verboseIter = FALSE,returnResamp = "all") 
+```
+
+### PT using PLS model to test pre treatment methods
+### Cook15min
+```{r}
+trait <- Cooking_traits[1]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  dados <- dados2[[j]]
+  set.seed(1)
+  index <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training <- dados[index, ]
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook15)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  set.seed(2304)
+  modelFit1 <- train(Cook15 ~ ., data = training2, 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"),tuneLength=10)
+
+modelFit2[[j]] <- modelFit1}
+```
+
+### results
+```{r}
+res <- resamples(modelFit2)
+res <- res$values
+resCV_1 <- list()
+
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")}
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$PT <- rep(c(1:9),each=50)
+resCV_2$PT <- as.factor(paste("pt",resCV_2$PT,sep = "_"))
+levels(resCV_2$PT) <- c("raw data", "1st","DT","MSC","SNV","1st + DT",
+                        "1st + MSC","DT + MSC", "1st + SG + DT")
+```
+
+### plot Cook15
+```{r}
+PT_Cook15 <- resCV_2
+ROC <- ggplot(PT_Cook15, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.82, 1) + ggtitle("ASD - Cook15")
+ 
+Sens <- ggplot(PT_Cook15, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook15")
+
+Spec <- ggplot(PT_Cook15, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook15") 
+
+```
+
+
+### PT using PLS model to test pre treatment methods
+### Cook20min
+```{r}
+trait <- Cooking_traits[2]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  dados <- dados2[[j]]
+  set.seed(1)
+  index <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training <- dados[index, ]
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*9) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(8, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook20)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  set.seed(2304)
+  modelFit1 <- train(Cook20 ~ ., data = training2, 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"),tuneLength=10)
+  modelFit2[[j]] <- modelFit1
+}
+
+```
+
+### results
+```{r}
+res <- resamples(modelFit2)
+res <- res$values
+resCV_1 <- list()
+
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")}
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$PT <- rep(c(1:9),each=50)
+resCV_2$PT <- as.factor(paste("pt",resCV_2$PT,sep = "_"))
+levels(resCV_2$PT) <- c("raw data", "1st","DT","MSC","SNV","1st + DT",
+                        "1st + MSC","DT + MSC", "1st + SG + DT")
+```
+
+### plot Cook20
+```{r}
+PT_Cook20 <- resCV_2
+ROC <- ggplot(PT_Cook20, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle("ASD - Cook20")
+ 
+Sens <- ggplot(PT_Cook20, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook20")
+
+Spec <- ggplot(PT_Cook20, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook20") 
+
+```
+
+### PT using PLS model to test pre treatment methods
+### Cook25min
+```{r}
+trait <- Cooking_traits[3]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  dados <- dados2[[j]]
+  set.seed(1)
+  index <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training <- dados[index, ]
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*4) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(3, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook25)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  set.seed(2304)
+  modelFit1 <- train(Cook25 ~ ., data = training2, 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"),tuneLength=10)
+
+modelFit2[[j]] <- modelFit1
+}
+
+```
+
+### results
+```{r}
+res <- resamples(modelFit2)
+res <- res$values
+resCV_1 <- list()
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")}
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$PT <- rep(c(1:9),each=50)
+resCV_2$PT <- as.factor(paste("pt",resCV_2$PT,sep = "_"))
+levels(resCV_2$PT) <- c("raw data", "1st","DT","MSC","SNV","1st + DT",
+                        "1st + MSC","DT + MSC", "1st + SG + DT")
+```
+
+### plot Cook25
+```{r}
+PT_Cook25 <- resCV_2
+ROC <- ggplot(PT_Cook25, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle("ASD - Cook25")
+ 
+Sens <- ggplot(PT_Cook25, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook25")
+
+Spec <- ggplot(PT_Cook25, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook25") 
+
+```
+
+
+
+### PT using PLS model to test pre treatment methods
+### Cook30min
+```{r}
+trait <- Cooking_traits[4]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  dados <- dados2[[j]]
+  set.seed(1)
+  index <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training <- dados[index, ]
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*3) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(2, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook30)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  set.seed(2304)
+  modelFit1 <- train(Cook30 ~ ., data = training2, 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"),tuneLength=10)
+
+modelFit2[[j]] <- modelFit1
+}
+
+```
+
+### results
+```{r}
+res <- resamples(modelFit2)
+res <- res$values
+resCV_1 <- list()
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")}
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$PT <- rep(c(1:9),each=50)
+resCV_2$PT <- as.factor(paste("pt",resCV_2$PT,sep = "_"))
+levels(resCV_2$PT) <- c("raw data", "1st","DT","MSC","SNV","1st + DT",
+                        "1st + MSC","DT + MSC", "1st + SG + DT")
+```
+
+### plot Cook30
+```{r}
+PT_Cook30 <- resCV_2
+ROC <- ggplot(PT_Cook30, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle("ASD - Cook30")
+ 
+Sens <- ggplot(PT_Cook30, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook30")
+
+Spec <- ggplot(PT_Cook30, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook30") 
+
+```
+
+
+### PT using PLS model to test pre treatment methods
+### Cook25min
+```{r}
+trait <- Cooking_traits[3]
+modelFit2 <- list()
+
+for (j in 1:9) {
+  dados <- dados2[[j]]
+  set.seed(1)
+  index <- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training <- dados[index, ]
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*4) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(3, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook25)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  set.seed(2304)
+  modelFit1 <- train(Cook25 ~ ., data = training2, 
+                          method = "pls", trControl = ctrl, 
+                          preProcess = c("center","scale"),tuneLength=10)
+
+modelFit2[[j]] <- modelFit1
+}
+
+```
+
+### results
+```{r}
+res <- resamples(modelFit2)
+res <- res$values
+resCV_1 <- list()
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")}
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$PT <- rep(c(1:9),each=50)
+resCV_2$PT <- as.factor(paste("pt",resCV_2$PT,sep = "_"))
+levels(resCV_2$PT) <- c("raw data", "1st","DT","MSC","SNV","1st + DT",
+                        "1st + MSC","DT + MSC", "1st + SG + DT")
+```
+
+### plot Cook25
+```{r}
+PT_Cook25 <- resCV_2
+ROC <- ggplot(PT_Cook25, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle("ASD - Cook25")
+ 
+Sens <- ggplot(PT_Cook25, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook25")
+
+Spec <- ggplot(PT_Cook25, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle("ASD - Cook25") 
+
+```

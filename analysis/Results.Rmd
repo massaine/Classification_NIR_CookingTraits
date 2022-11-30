@@ -10,6 +10,71 @@ editor_options:
 ## Introduction
 
 ```{r}
+##
+modelname <- "PLS"
+data <- "ASD_Cook15"
+
+#Now let’s plot a ROC curve
+
+library("ROCR")
+
+results <- resamples(modelFit1)
+res <- results$values
+resCV_1 <- list()
+colnames(res)
+for(i in 1:9){
+  resCV_1[[i]] <- res[,c(paste(paste("Model0",i,sep = ""),"~ROC",sep = ""),
+                         paste(paste("Model0",i,sep = ""),"~Sens",sep = ""),
+                         paste(paste("Model0",i,sep = ""),"~Spec",sep = ""))]
+  colnames(resCV_1[[i]]) <- c("ROC","Sens","Spec")
+  
+}
+i=10
+resCV_1[[10]] <- res[,c(paste(paste("Model",i,sep = ""),"~ROC",sep = ""),
+                        paste(paste("Model",i,sep = ""),"~Sens",sep = ""),
+                        paste(paste("Model",i,sep = ""),"~Spec",sep = ""))]
+colnames(resCV_1[[10]]) <- c("ROC","Sens","Spec")
+
+resCV_2 <- do.call(rbind,resCV_1)
+resCV_2$model <- modelname
+resCV_2$data <- data
+
+rCM <- matrix(NA,ncol = 3,nrow = 10)
+pCM <- list() #PARAMETROS
+tCM <- list() #TABLE
+
+for (i in 1:10) {
+  rCM[i,1] <- CM[[i]]$overall[1]
+  rCM[i,2] <- CM[[i]]$overall[2]
+  pCM[[i]] <- as.data.frame(CM[[i]]$byClass)
+  tCM[[i]] <- CM[[i]]$table
+  pCM[[i]]$Model <- modelname
+  pCM[[i]]$data <- data
+  
+  p <- predict(modelFit1[[i]],testing[[i]], type = "raw")
+  levels(p) <- c(0,1)
+  p1 <- as.numeric(as.matrix(p))
+  test <- testing[[i]]$Cook15
+  levels(test)<- c(0,1)
+  test1 <- as.numeric(as.matrix(test))
+  roc_pred <- prediction(predictions = p1, labels = test1)
+  auc_ROCR <- performance(roc_pred, measure = "auc")
+  rCM[i,3] <-  (auc_ROCR <- auc_ROCR@y.values[[1]])
+}
+
+colnames(rCM) <- c("Accuracy","Kappa","AUC")
+rCM <- as.data.frame(rCM)
+rCM$model <- modelname
+rCM$data <- data
+
+
+save(resCV_2,rCM,pCM,tCM,file = "Results_ASD_Mashed_Cook15_PLS_Estr2.RData")
+
+rm(CM,modelFit1,testing,training)
+
+######################################################################################################
+
+
 
 ```
 

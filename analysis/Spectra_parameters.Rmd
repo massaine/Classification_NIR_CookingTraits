@@ -8,8 +8,16 @@ editor_options:
 ---
 
 ## Introduction
+```{r}
+library(dplyr)
+
+```
+
 
 ```{r}
+load(file=here::here("output","dadosASD.RData"))
+dados <- dados[,1:100]
+
 
 ```
 
