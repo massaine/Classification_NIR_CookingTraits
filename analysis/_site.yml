@@ -3,7 +3,7 @@ output_dir: ../docs
 navbar:
   title: "Classification_NIR_CokkingTraits"
   left:
-  - text: Home
+  - text: analisys
     href: index.html
   - text: About
     href: about.html
