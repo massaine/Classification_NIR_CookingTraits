@@ -6,13 +6,6 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
-```{r setup, include=FALSE} 
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE)
-memory.limit(70000)
-```
-
 
 ## Packages
 ```{r}
@@ -24,6 +17,7 @@ library(pROC)
 library(C50)
 library(plsRglm)
 library(stringr)
+library(workflowr)
 
 amostra <- "Mashed"
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
@@ -170,7 +164,7 @@ pt[[9]] <- round(blockNorm(X = d1_sg_dt, targetnorm = 1)$Xscaled,12)
 ```
 
 
-```{r}
+```{r, eval = F}
 dados2 <- list()
 
 for (i in 1:9) {
@@ -185,7 +179,7 @@ for (i in 1:9) {
 ```
 
 ### Save RData + pretreatment methods
-```{r}
+```{r, eval = F}
 if(NIR=="ASD"){save(dados2,file = here::here("output","dadosASD_Mas_PT.RData"))}
 
 if(NIR=="BUCHI"){save(dados2,file =here::here("output","dadosBUCHI_Mas_PT.RData"))}

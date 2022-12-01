@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="massaine" />
+
+<meta name="date" content="2022-11-25" />
+
+<title>Accuracy Pre treatment methods</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Classification_NIR_CokkingTraits</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">analisys</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Accuracy Pre treatment methods</h1>
+<h4 class="author">massaine</h4>
+<h4 class="date">2022-11-25</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-11-30
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Classification_NIR_CookingTraits/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221125code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20221125)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221125code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221125)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommassaineClassificationNIRCookingTraitstree6cac85098e42969095d18b3225b70f31da024b6btargetblank6cac850a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/massaine/Classification_NIR_CookingTraits/tree/6cac85098e42969095d18b3225b70f31da024b6b" target="_blank">6cac850</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommassaineClassificationNIRCookingTraitstree6cac85098e42969095d18b3225b70f31da024b6btargetblank6cac850a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/massaine/Classification_NIR_CookingTraits/tree/6cac85098e42969095d18b3225b70f31da024b6b" target="_blank">6cac850</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/2020-DadosNIRASD_fen_BR.PYTGS.19.txt
+    Ignored:    data/2020-DadosNIRBUCHI_fen_PYTGS.CETBAG.19.txt
+    Ignored:    data/2021-DadosNIRASD_Cook.txt
+    Ignored:    data/2021-DadosNIRBUCHI_Cook.txt
+    Ignored:    data/2022_DadosNIRASD_Cook.txt
+    Ignored:    data/2022_DadosNIRBUCHI_Cook.txt
+    Ignored:    data/2022_DadosNIRSCIO_Cook.txt
+    Ignored:    data/DadosNIRASD_fen_BR.CETBAG.19.txt
+    Ignored:    output/dadosASD.RData
+    Ignored:    output/dadosASD_Mas_PT.RData
+    Ignored:    output/dadosBUCHI.RData
+    Ignored:    output/dadosBUCHI_Mas_PT.RData
+    Ignored:    output/dadosSCIO.RData
+
+Untracked files:
+    Untracked:  PT_Cook20_ROC_ASD.png
+    Untracked:  PT_Cook20_Sens_ASD.png
+    Untracked:  PT_Cook20_Spec_ASD.png
+    Untracked:  Table_PT_Cook20_ASD.html
+    Untracked:  data/.gitignore
+    Untracked:  output/.gitignore
+    Untracked:  output/PT_results_ASD.RData
+
+Unstaged changes:
+    Modified:   analysis/Load_Dataset.Rmd
+    Modified:   analysis/Pre_treatment_Accuracy.Rmd
+    Modified:   analysis/Spectra_PreTreatment.Rmd
+    Modified:   analysis/Spectra_parameters.Rmd
+    Modified:   analysis/_site.yml
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Pre_treatment_Accuracy.Rmd</code>) and HTML (<code>docs/Pre_treatment_Accuracy.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/6cac85098e42969095d18b3225b70f31da024b6b/analysis/Pre_treatment_Accuracy.Rmd" target="_blank">6cac850</a>
+</td>
+<td>
+massaine
+</td>
+<td>
+2022-11-30
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/b79ab80838fe43bf4afc00188844a3703aebc639/analysis/Pre_treatment_Accuracy.Rmd" target="_blank">b79ab80</a>
+</td>
+<td>
+massaine
+</td>
+<td>
+2022-11-30
+</td>
+<td>
+Third commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="packages" class="section level3">
+<h3>Packages</h3>
+<pre class="r"><code>options(stringsAsFactors=FALSE)
+library(prospectr)</code></pre>
+<pre><code>Warning: package &#39;prospectr&#39; was built under R version 4.1.3</code></pre>
+<pre><code>[34mprospectr version 0.2.4 -- [39m&#39;mandarina&#39;</code></pre>
+<pre><code>[34mcheck the github repository at: https://github.com/l-ramirez-lopez/prospectr/[39m</code></pre>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>Warning: package &#39;caret&#39; was built under R version 4.1.3</code></pre>
+<pre><code>Carregando pacotes exigidos: ggplot2</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.1.3</code></pre>
+<pre><code>Carregando pacotes exigidos: lattice</code></pre>
+<pre class="r"><code>library(mlbench)
+library(pROC)</code></pre>
+<pre><code>Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</code></pre>
+<pre><code>
+Attaching package: &#39;pROC&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    cov, smooth, var</code></pre>
+<pre class="r"><code>library(stringr)</code></pre>
+<pre><code>Warning: package &#39;stringr&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>library(&quot;ROCR&quot;)</code></pre>
+<pre><code>Warning: package &#39;ROCR&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>library(gt)</code></pre>
+<pre><code>Warning: package &#39;gt&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>Cooking_traits &lt;- c(&quot;Cook15&quot;,&quot;Cook20&quot;,&quot;Cook25&quot;,&quot;Cook30&quot;,&quot;Cook40&quot;)</code></pre>
+</div>
+<div id="load-data" class="section level3">
+<h3>load data</h3>
+<pre class="r"><code>NIR &lt;- &quot;ASD&quot;
+load(file=here::here(&quot;output&quot;,&quot;dadosASD_Mas_PT.RData&quot;))</code></pre>
+</div>
+<div id="validation-scheme" class="section level3">
+<h3>Validation scheme</h3>
+<pre class="r"><code>ctrl &lt;- trainControl(method=&quot;repeatedcv&quot;,repeats = 5,
+                     summaryFunction=twoClassSummary, 
+                     classProbs=T, savePredictions = T,
+                     verboseIter = FALSE,returnResamp = &quot;all&quot;) </code></pre>
+</div>
+<div id="pls-model-to-test-pre-treatment-methods" class="section level2">
+<h2>PLS model to test pre treatment methods</h2>
+<div id="cook15min" class="section level3">
+<h3>Cook15min</h3>
+<pre class="r"><code>trait &lt;- Cooking_traits[1]
+modelFit2 &lt;- list()
+
+if (trait==&quot;Cook15&quot;) {
+for (j in 1:9) {
+  dados &lt;- dados2[[j]]
+  set.seed(1)
+  index &lt;- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training &lt;- dados[index, ]
+  OvSam &lt;- subset(training,training[,trait]==&quot;Yes&quot;)
+  Ns &lt;- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
+  sample1 &lt;- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x &lt;- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+  training1 &lt;- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook15)
+  training2 &lt;- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] &lt;- trait
+  set.seed(2304)
+  modelFit1 &lt;- train(Cook15 ~ ., data = training2, 
+                          method = &quot;pls&quot;, trControl = ctrl, 
+                          preProcess = c(&quot;center&quot;,&quot;scale&quot;),tuneLength=10)
+
+modelFit2[[j]] &lt;- modelFit1}
+}</code></pre>
+<pre class="r"><code>if (trait==&quot;Cook15&quot;) {
+res &lt;- resamples(modelFit2)
+res &lt;- res$values
+resCV_1 &lt;- list()
+
+for(i in 1:9){
+  resCV_1[[i]] &lt;- res[,c(paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~ROC&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Sens&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Spec&quot;,sep = &quot;&quot;))]
+  colnames(resCV_1[[i]]) &lt;- c(&quot;ROC&quot;,&quot;Sens&quot;,&quot;Spec&quot;)}
+
+resCV_2 &lt;- do.call(rbind,resCV_1)
+resCV_2$PT &lt;- rep(c(1:9),each=50)
+resCV_2$PT &lt;- as.factor(paste(&quot;pt&quot;,resCV_2$PT,sep = &quot;_&quot;))
+levels(resCV_2$PT) &lt;- c(&quot;raw data&quot;, &quot;1st&quot;,&quot;DT&quot;,&quot;MSC&quot;,&quot;SNV&quot;,&quot;1st + DT&quot;,
+                        &quot;1st + MSC&quot;,&quot;DT + MSC&quot;, &quot;1st + SG + DT&quot;)}</code></pre>
+</div>
+<div id="plot-cook15" class="section level3">
+<h3>plot Cook15</h3>
+<pre class="r"><code>load(file = here::here(&quot;output&quot;, &quot;PT_results_ASD.RData&quot;))
+#PT_Cook15 &lt;- resCV_2
+
+ggplot(PT_Cook15, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook15&quot;)</code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(PT_Cook15, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook15&quot;)</code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(PT_Cook15, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook15&quot;) </code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="table-cook15" class="section level3">
+<h3>table Cook15</h3>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 4.1.3</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>   PT_Cook15 %&gt;%group_by(PT)%&gt;%
+   summarise(ROCm = round(mean(ROC, na.rm = T),3),
+            ROC.sd = round(sd(ROC, na.rm = T),3),
+            Spec.m = round(mean(Spec, na.rm = T),3),
+            Spec.sd = round(sd(Spec, na.rm = T),3),
+            Sens.m = round(mean(Sens, na.rm = T),3),
+            Sens.sd = round(sd(Sens, na.rm = T),3)) %&gt;%
+       gt()  %&gt;%     tab_options(table.font.size = pct(75))</code></pre>
+<div id="mbtbupfiyi" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mbtbupfiyi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 75%;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mbtbupfiyi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mbtbupfiyi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mbtbupfiyi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mbtbupfiyi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mbtbupfiyi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mbtbupfiyi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mbtbupfiyi .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mbtbupfiyi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mbtbupfiyi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mbtbupfiyi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mbtbupfiyi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mbtbupfiyi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mbtbupfiyi .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#mbtbupfiyi .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#mbtbupfiyi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mbtbupfiyi .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#mbtbupfiyi .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mbtbupfiyi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mbtbupfiyi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mbtbupfiyi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mbtbupfiyi .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mbtbupfiyi .gt_left {
+  text-align: left;
+}
+
+#mbtbupfiyi .gt_center {
+  text-align: center;
+}
+
+#mbtbupfiyi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mbtbupfiyi .gt_font_normal {
+  font-weight: normal;
+}
+
+#mbtbupfiyi .gt_font_bold {
+  font-weight: bold;
+}
+
+#mbtbupfiyi .gt_font_italic {
+  font-style: italic;
+}
+
+#mbtbupfiyi .gt_super {
+  font-size: 65%;
+}
+
+#mbtbupfiyi .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
+}
+
+#mbtbupfiyi .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#mbtbupfiyi .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#mbtbupfiyi .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#mbtbupfiyi .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#mbtbupfiyi .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">PT</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ROCm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ROC.sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Spec.m</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Spec.sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Sens.m</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Sens.sd</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_center">raw data</td>
+<td class="gt_row gt_right">0.861</td>
+<td class="gt_row gt_right">0.010</td>
+<td class="gt_row gt_right">0.804</td>
+<td class="gt_row gt_right">0.022</td>
+<td class="gt_row gt_right">0.778</td>
+<td class="gt_row gt_right">0.018</td></tr>
+    <tr><td class="gt_row gt_center">1st</td>
+<td class="gt_row gt_right">0.990</td>
+<td class="gt_row gt_right">0.004</td>
+<td class="gt_row gt_right">1.000</td>
+<td class="gt_row gt_right">0.000</td>
+<td class="gt_row gt_right">0.900</td>
+<td class="gt_row gt_right">0.015</td></tr>
+    <tr><td class="gt_row gt_center">DT</td>
+<td class="gt_row gt_right">0.888</td>
+<td class="gt_row gt_right">0.010</td>
+<td class="gt_row gt_right">0.853</td>
+<td class="gt_row gt_right">0.018</td>
+<td class="gt_row gt_right">0.779</td>
+<td class="gt_row gt_right">0.020</td></tr>
+    <tr><td class="gt_row gt_center">MSC</td>
+<td class="gt_row gt_right">0.882</td>
+<td class="gt_row gt_right">0.010</td>
+<td class="gt_row gt_right">0.820</td>
+<td class="gt_row gt_right">0.024</td>
+<td class="gt_row gt_right">0.789</td>
+<td class="gt_row gt_right">0.017</td></tr>
+    <tr><td class="gt_row gt_center">SNV</td>
+<td class="gt_row gt_right">0.883</td>
+<td class="gt_row gt_right">0.009</td>
+<td class="gt_row gt_right">0.822</td>
+<td class="gt_row gt_right">0.021</td>
+<td class="gt_row gt_right">0.788</td>
+<td class="gt_row gt_right">0.016</td></tr>
+    <tr><td class="gt_row gt_center">1st + DT</td>
+<td class="gt_row gt_right">0.989</td>
+<td class="gt_row gt_right">0.004</td>
+<td class="gt_row gt_right">1.000</td>
+<td class="gt_row gt_right">0.000</td>
+<td class="gt_row gt_right">0.895</td>
+<td class="gt_row gt_right">0.013</td></tr>
+    <tr><td class="gt_row gt_center">1st + MSC</td>
+<td class="gt_row gt_right">0.989</td>
+<td class="gt_row gt_right">0.004</td>
+<td class="gt_row gt_right">1.000</td>
+<td class="gt_row gt_right">0.000</td>
+<td class="gt_row gt_right">0.899</td>
+<td class="gt_row gt_right">0.014</td></tr>
+    <tr><td class="gt_row gt_center">DT + MSC</td>
+<td class="gt_row gt_right">0.895</td>
+<td class="gt_row gt_right">0.009</td>
+<td class="gt_row gt_right">0.856</td>
+<td class="gt_row gt_right">0.022</td>
+<td class="gt_row gt_right">0.775</td>
+<td class="gt_row gt_right">0.018</td></tr>
+    <tr><td class="gt_row gt_center">1st + SG + DT</td>
+<td class="gt_row gt_right">0.950</td>
+<td class="gt_row gt_right">0.007</td>
+<td class="gt_row gt_right">0.945</td>
+<td class="gt_row gt_right">0.012</td>
+<td class="gt_row gt_right">0.841</td>
+<td class="gt_row gt_right">0.018</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="cook20min" class="section level3">
+<h3>Cook20min</h3>
+<pre class="r"><code>#trait &lt;- Cooking_traits[2]
+#modelFit2 &lt;- list()
+if (trait==&quot;Cook20&quot;) {
+for (j in 1:9) {
+  dados &lt;- dados2[[j]]
+  set.seed(1)
+  index &lt;- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training &lt;- dados[index, ]
+  OvSam &lt;- subset(training,training[,trait]==&quot;Yes&quot;)
+  Ns &lt;- round(table(training[,trait])[1]) - (nrow(OvSam)*9) 
+  sample1 &lt;- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x &lt;- do.call(rbind, replicate(8, OvSam, simplify=FALSE))
+  training1 &lt;- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook20)
+  training2 &lt;- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] &lt;- trait
+  set.seed(2304)
+  modelFit1 &lt;- train(Cook20 ~ ., data = training2, 
+                          method = &quot;pls&quot;, trControl = ctrl, 
+                          preProcess = c(&quot;center&quot;,&quot;scale&quot;),tuneLength=10)
+  modelFit2[[j]] &lt;- modelFit1
+}}</code></pre>
+</div>
+<div id="results" class="section level3">
+<h3>results</h3>
+<pre class="r"><code>res &lt;- resamples(modelFit2)
+res &lt;- res$values
+resCV_1 &lt;- list()
+
+for(i in 1:9){
+  resCV_1[[i]] &lt;- res[,c(paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~ROC&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Sens&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Spec&quot;,sep = &quot;&quot;))]
+  colnames(resCV_1[[i]]) &lt;- c(&quot;ROC&quot;,&quot;Sens&quot;,&quot;Spec&quot;)}
+
+resCV_2 &lt;- do.call(rbind,resCV_1)
+resCV_2$PT &lt;- rep(c(1:9),each=50)
+resCV_2$PT &lt;- as.factor(paste(&quot;pt&quot;,resCV_2$PT,sep = &quot;_&quot;))
+levels(resCV_2$PT) &lt;- c(&quot;raw data&quot;, &quot;1st&quot;,&quot;DT&quot;,&quot;MSC&quot;,&quot;SNV&quot;,&quot;1st + DT&quot;,
+                        &quot;1st + MSC&quot;,&quot;DT + MSC&quot;, &quot;1st + SG + DT&quot;)</code></pre>
+</div>
+<div id="plot-cook20" class="section level3">
+<h3>plot Cook20</h3>
+<pre class="r"><code>#PT_Cook20 &lt;- resCV_2
+ggplot(PT_Cook20, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook20&quot;)</code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(PT_Cook20, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook20&quot;)</code></pre>
+<pre><code>Warning: Removed 38 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(PT_Cook20, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook20&quot;) </code></pre>
+<pre><code>Warning: Removed 5 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/Pre_treatment_Accuracy.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="table" class="section level3">
+<h3>table</h3>
+<pre class="r"><code>   PT_Cook20%&gt;%group_by(PT)%&gt;%
+   summarise(ROCm = round(mean(ROC, na.rm = T),3),
+            ROC.sd = round(sd(ROC, na.rm = T),3),
+            Spec.m = round(mean(Spec, na.rm = T),3),
+            Spec.sd = round(sd(Spec, na.rm = T),3),
+            Sens.m = round(mean(Sens, na.rm = T),3),
+            Sens.sd = round(sd(Sens, na.rm = T),3)) %&gt;%
+       gt()  %&gt;%     tab_options(table.font.size = pct(75))</code></pre>
+<div id="xycfbypoqf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#xycfbypoqf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 75%;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xycfbypoqf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xycfbypoqf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xycfbypoqf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xycfbypoqf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xycfbypoqf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xycfbypoqf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xycfbypoqf .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xycfbypoqf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xycfbypoqf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xycfbypoqf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xycfbypoqf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xycfbypoqf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xycfbypoqf .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xycfbypoqf .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xycfbypoqf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xycfbypoqf .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xycfbypoqf .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xycfbypoqf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xycfbypoqf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xycfbypoqf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xycfbypoqf .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xycfbypoqf .gt_left {
+  text-align: left;
+}
+
+#xycfbypoqf .gt_center {
+  text-align: center;
+}
+
+#xycfbypoqf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xycfbypoqf .gt_font_normal {
+  font-weight: normal;
+}
+
+#xycfbypoqf .gt_font_bold {
+  font-weight: bold;
+}
+
+#xycfbypoqf .gt_font_italic {
+  font-style: italic;
+}
+
+#xycfbypoqf .gt_super {
+  font-size: 65%;
+}
+
+#xycfbypoqf .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
+}
+
+#xycfbypoqf .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#xycfbypoqf .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xycfbypoqf .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#xycfbypoqf .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#xycfbypoqf .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">PT</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ROCm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ROC.sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Spec.m</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Spec.sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Sens.m</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Sens.sd</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_center">raw data</td>
+<td class="gt_row gt_right">0.793</td>
+<td class="gt_row gt_right">0.016</td>
+<td class="gt_row gt_right">0.734</td>
+<td class="gt_row gt_right">0.024</td>
+<td class="gt_row gt_right">0.718</td>
+<td class="gt_row gt_right">0.021</td></tr>
+    <tr><td class="gt_row gt_center">1st</td>
+<td class="gt_row gt_right">0.944</td>
+<td class="gt_row gt_right">0.008</td>
+<td class="gt_row gt_right">0.946</td>
+<td class="gt_row gt_right">0.012</td>
+<td class="gt_row gt_right">0.824</td>
+<td class="gt_row gt_right">0.019</td></tr>
+    <tr><td class="gt_row gt_center">DT</td>
+<td class="gt_row gt_right">0.819</td>
+<td class="gt_row gt_right">0.018</td>
+<td class="gt_row gt_right">0.778</td>
+<td class="gt_row gt_right">0.023</td>
+<td class="gt_row gt_right">0.719</td>
+<td class="gt_row gt_right">0.024</td></tr>
+    <tr><td class="gt_row gt_center">MSC</td>
+<td class="gt_row gt_right">0.806</td>
+<td class="gt_row gt_right">0.016</td>
+<td class="gt_row gt_right">0.744</td>
+<td class="gt_row gt_right">0.024</td>
+<td class="gt_row gt_right">0.723</td>
+<td class="gt_row gt_right">0.022</td></tr>
+    <tr><td class="gt_row gt_center">SNV</td>
+<td class="gt_row gt_right">0.810</td>
+<td class="gt_row gt_right">0.015</td>
+<td class="gt_row gt_right">0.760</td>
+<td class="gt_row gt_right">0.024</td>
+<td class="gt_row gt_right">0.732</td>
+<td class="gt_row gt_right">0.021</td></tr>
+    <tr><td class="gt_row gt_center">1st + DT</td>
+<td class="gt_row gt_right">0.940</td>
+<td class="gt_row gt_right">0.007</td>
+<td class="gt_row gt_right">0.939</td>
+<td class="gt_row gt_right">0.014</td>
+<td class="gt_row gt_right">0.816</td>
+<td class="gt_row gt_right">0.018</td></tr>
+    <tr><td class="gt_row gt_center">1st + MSC</td>
+<td class="gt_row gt_right">0.942</td>
+<td class="gt_row gt_right">0.007</td>
+<td class="gt_row gt_right">0.946</td>
+<td class="gt_row gt_right">0.012</td>
+<td class="gt_row gt_right">0.817</td>
+<td class="gt_row gt_right">0.017</td></tr>
+    <tr><td class="gt_row gt_center">DT + MSC</td>
+<td class="gt_row gt_right">0.836</td>
+<td class="gt_row gt_right">0.016</td>
+<td class="gt_row gt_right">0.797</td>
+<td class="gt_row gt_right">0.022</td>
+<td class="gt_row gt_right">0.733</td>
+<td class="gt_row gt_right">0.025</td></tr>
+    <tr><td class="gt_row gt_center">1st + SG + DT</td>
+<td class="gt_row gt_right">0.890</td>
+<td class="gt_row gt_right">0.011</td>
+<td class="gt_row gt_right">0.856</td>
+<td class="gt_row gt_right">0.015</td>
+<td class="gt_row gt_right">0.776</td>
+<td class="gt_row gt_right">0.024</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="cook25min---models" class="section level3">
+<h3>Cook25min - Models</h3>
+<pre class="r"><code>#trait &lt;- Cooking_traits[3]
+#modelFit2 &lt;- list()
+if (trait==&quot;Cook25&quot;) {
+for (j in 1:9) {
+  dados &lt;- dados2[[j]]
+  set.seed(1)
+  index &lt;- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training &lt;- dados[index, ]
+  OvSam &lt;- subset(training,training[,trait]==&quot;Yes&quot;)
+  Ns &lt;- round(table(training[,trait])[1]) - (nrow(OvSam)*4) 
+  sample1 &lt;- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x &lt;- do.call(rbind, replicate(3, OvSam, simplify=FALSE))
+  training1 &lt;- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook25)
+  training2 &lt;- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] &lt;- trait
+  set.seed(2304)
+  modelFit1 &lt;- train(Cook25 ~ ., data = training2, 
+                          method = &quot;pls&quot;, trControl = ctrl, 
+                          preProcess = c(&quot;center&quot;,&quot;scale&quot;),tuneLength=10)
+
+modelFit2[[j]] &lt;- modelFit1
+}}</code></pre>
+<pre class="r"><code>res &lt;- resamples(modelFit2)
+res &lt;- res$values
+resCV_1 &lt;- list()
+for(i in 1:9){
+  resCV_1[[i]] &lt;- res[,c(paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~ROC&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Sens&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Spec&quot;,sep = &quot;&quot;))]
+  colnames(resCV_1[[i]]) &lt;- c(&quot;ROC&quot;,&quot;Sens&quot;,&quot;Spec&quot;)}
+
+resCV_2 &lt;- do.call(rbind,resCV_1)
+resCV_2$PT &lt;- rep(c(1:9),each=50)
+resCV_2$PT &lt;- as.factor(paste(&quot;pt&quot;,resCV_2$PT,sep = &quot;_&quot;))
+levels(resCV_2$PT) &lt;- c(&quot;raw data&quot;, &quot;1st&quot;,&quot;DT&quot;,&quot;MSC&quot;,&quot;SNV&quot;,&quot;1st + DT&quot;,
+                        &quot;1st + MSC&quot;,&quot;DT + MSC&quot;, &quot;1st + SG + DT&quot;)</code></pre>
+</div>
+<div id="plot-cook25" class="section level3">
+<h3>plot Cook25</h3>
+<pre class="r"><code>PT_Cook25 &lt;- resCV_2
+ROC &lt;- ggplot(PT_Cook25, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle(&quot;ASD - Cook25&quot;)
+ 
+Sens &lt;- ggplot(PT_Cook25, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook25&quot;)
+
+Spec &lt;- ggplot(PT_Cook25, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook25&quot;) </code></pre>
+</div>
+<div id="pt-using-pls-model-to-test-pre-treatment-methods" class="section level3">
+<h3>PT using PLS model to test pre treatment methods</h3>
+</div>
+<div id="cook30min" class="section level3">
+<h3>Cook30min</h3>
+<pre class="r"><code>#trait &lt;- Cooking_traits[4]
+#modelFit2 &lt;- list()
+if (trait==&quot;Cook30&quot;) {
+for (j in 1:9) {
+  dados &lt;- dados2[[j]]
+  set.seed(1)
+  index &lt;- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training &lt;- dados[index, ]
+  OvSam &lt;- subset(training,training[,trait]==&quot;Yes&quot;)
+  Ns &lt;- round(table(training[,trait])[1]) - (nrow(OvSam)*3) 
+  sample1 &lt;- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x &lt;- do.call(rbind, replicate(2, OvSam, simplify=FALSE))
+  training1 &lt;- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook30)
+  training2 &lt;- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] &lt;- trait
+  set.seed(2304)
+  modelFit1 &lt;- train(Cook30 ~ ., data = training2, 
+                          method = &quot;pls&quot;, trControl = ctrl, 
+                          preProcess = c(&quot;center&quot;,&quot;scale&quot;),tuneLength=10)
+
+modelFit2[[j]] &lt;- modelFit1
+}}</code></pre>
+</div>
+<div id="results-1" class="section level3">
+<h3>results</h3>
+<pre class="r"><code>res &lt;- resamples(modelFit2)
+res &lt;- res$values
+resCV_1 &lt;- list()
+for(i in 1:9){
+  resCV_1[[i]] &lt;- res[,c(paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~ROC&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Sens&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Spec&quot;,sep = &quot;&quot;))]
+  colnames(resCV_1[[i]]) &lt;- c(&quot;ROC&quot;,&quot;Sens&quot;,&quot;Spec&quot;)}
+
+resCV_2 &lt;- do.call(rbind,resCV_1)
+resCV_2$PT &lt;- rep(c(1:9),each=50)
+resCV_2$PT &lt;- as.factor(paste(&quot;pt&quot;,resCV_2$PT,sep = &quot;_&quot;))
+levels(resCV_2$PT) &lt;- c(&quot;raw data&quot;, &quot;1st&quot;,&quot;DT&quot;,&quot;MSC&quot;,&quot;SNV&quot;,&quot;1st + DT&quot;,
+                        &quot;1st + MSC&quot;,&quot;DT + MSC&quot;, &quot;1st + SG + DT&quot;)</code></pre>
+</div>
+<div id="plot-cook30" class="section level3">
+<h3>plot Cook30</h3>
+<pre class="r"><code>PT_Cook30 &lt;- resCV_2
+ROC &lt;- ggplot(PT_Cook30, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle(&quot;ASD - Cook30&quot;)
+ 
+Sens &lt;- ggplot(PT_Cook30, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook30&quot;)
+
+Spec &lt;- ggplot(PT_Cook30, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook30&quot;) </code></pre>
+</div>
+<div id="pt-using-pls-model-to-test-pre-treatment-methods-1" class="section level3">
+<h3>PT using PLS model to test pre treatment methods</h3>
+</div>
+<div id="cook40min" class="section level3">
+<h3>Cook40min</h3>
+<pre class="r"><code>#trait &lt;- Cooking_traits[5]
+#modelFit2 &lt;- list()
+if (trait==&quot;Cook40&quot;) {
+for (j in 1:9) {
+  dados &lt;- dados2[[j]]
+  set.seed(1)
+  index &lt;- createDataPartition(dados[,trait], p = .75, list = FALSE)
+  training &lt;- dados[index, ]
+  OvSam &lt;- subset(training,training[,trait]==&quot;Yes&quot;)
+  Ns &lt;- round(table(training[,trait])[1]) - (nrow(OvSam)*2) 
+  sample1 &lt;- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x &lt;- do.call(rbind, replicate(1, OvSam, simplify=FALSE))
+  training1 &lt;- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook40)
+  training2 &lt;- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] &lt;- trait
+  set.seed(2304)
+  modelFit1 &lt;- train(Cook40 ~ ., data = training2, 
+                          method = &quot;pls&quot;, trControl = ctrl, 
+                          preProcess = c(&quot;center&quot;,&quot;scale&quot;),tuneLength=10)
+
+modelFit2[[j]] &lt;- modelFit1
+}}</code></pre>
+</div>
+<div id="results-2" class="section level3">
+<h3>results</h3>
+<pre class="r"><code>res &lt;- resamples(modelFit2)
+res &lt;- res$values
+resCV_1 &lt;- list()
+for(i in 1:9){
+  resCV_1[[i]] &lt;- res[,c(paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~ROC&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Sens&quot;,sep = &quot;&quot;),
+                         paste(paste(&quot;Model&quot;,i,sep = &quot;&quot;),&quot;~Spec&quot;,sep = &quot;&quot;))]
+  colnames(resCV_1[[i]]) &lt;- c(&quot;ROC&quot;,&quot;Sens&quot;,&quot;Spec&quot;)}
+
+resCV_2 &lt;- do.call(rbind,resCV_1)
+resCV_2$PT &lt;- rep(c(1:9),each=50)
+resCV_2$PT &lt;- as.factor(paste(&quot;pt&quot;,resCV_2$PT,sep = &quot;_&quot;))
+levels(resCV_2$PT) &lt;- c(&quot;raw data&quot;, &quot;1st&quot;,&quot;DT&quot;,&quot;MSC&quot;,&quot;SNV&quot;,&quot;1st + DT&quot;,
+                        &quot;1st + MSC&quot;,&quot;DT + MSC&quot;, &quot;1st + SG + DT&quot;)</code></pre>
+</div>
+<div id="plot-cook40" class="section level3">
+<h3>plot Cook40</h3>
+<pre class="r"><code>PT_Cook40 &lt;- resCV_2
+ROC &lt;- ggplot(PT_Cook40, aes(x=PT, y=ROC, fill=PT)) + 
+  geom_boxplot()   + theme_bw() + ylim(0.8, 1) + ggtitle(&quot;ASD - Cook40&quot;)
+ 
+Sens &lt;- ggplot(PT_Cook40, aes(x=PT, y=Sens, fill=PT)) + 
+  geom_boxplot() + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook40&quot;)
+
+Spec &lt;- ggplot(PT_Cook40, aes(x=PT, y=Spec, fill=PT)) + 
+  geom_boxplot()  + theme_bw() + ylim(0.7, 1) + ggtitle(&quot;ASD - Cook40&quot;) </code></pre>
+</div>
+<div id="save-data" class="section level3">
+<h3>Save data</h3>
+<pre class="r"><code>#save(PT_Cook15,PT_Cook20,PT_Cook25,PT_Cook30,
+#     PT_Cook40, file = here::here(&quot;output&quot;, &quot;PT_results_ASD.RData&quot;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.1 (2021-08-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19044)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=Portuguese_Brazil.1252  LC_CTYPE=Portuguese_Brazil.1252   
+[3] LC_MONETARY=Portuguese_Brazil.1252 LC_NUMERIC=C                      
+[5] LC_TIME=Portuguese_Brazil.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] dplyr_1.0.9     gt_0.6.0        ROCR_1.0-11     stringr_1.4.1  
+ [5] pROC_1.18.0     mlbench_2.1-3   caret_6.0-92    lattice_0.20-44
+ [9] ggplot2_3.3.6   prospectr_0.2.4
+
+loaded via a namespace (and not attached):
+ [1] sass_0.4.1           jsonlite_1.8.0       splines_4.1.1       
+ [4] foreach_1.5.2        here_1.0.1           prodlim_2019.11.13  
+ [7] bslib_0.3.1          assertthat_0.2.1     highr_0.9           
+[10] stats4_4.1.1         yaml_2.3.5           globals_0.15.1      
+[13] ipred_0.9-13         backports_1.4.1      pillar_1.7.0        
+[16] glue_1.6.2           digest_0.6.29        checkmate_2.1.0     
+[19] promises_1.2.0.1     hardhat_1.0.0        colorspace_2.0-3    
+[22] recipes_0.2.0        htmltools_0.5.2      httpuv_1.6.5        
+[25] Matrix_1.3-4         plyr_1.8.7           timeDate_3043.102   
+[28] pkgconfig_2.0.3      listenv_0.8.0        purrr_0.3.4         
+[31] scales_1.2.0         whisker_0.4          later_1.3.0         
+[34] gower_1.0.0          lava_1.6.10          git2r_0.30.1        
+[37] tibble_3.1.7         farver_2.1.0         generics_0.1.2      
+[40] ellipsis_0.3.2       withr_2.5.0          nnet_7.3-16         
+[43] cli_3.3.0            survival_3.2-11      magrittr_2.0.3      
+[46] crayon_1.5.1         evaluate_0.15        fs_1.5.2            
+[49] fansi_1.0.3          future_1.26.1        parallelly_1.32.0   
+[52] nlme_3.1-152         MASS_7.3-54          class_7.3-19        
+[55] tools_4.1.1          data.table_1.14.2    lifecycle_1.0.1     
+[58] munsell_0.5.0        compiler_4.1.1       jquerylib_0.1.4     
+[61] rlang_1.0.2          grid_4.1.1           iterators_1.0.14    
+[64] rstudioapi_0.13      labeling_0.4.2       rmarkdown_2.18      
+[67] gtable_0.3.0         ModelMetrics_1.2.2.2 codetools_0.2-18    
+[70] DBI_1.1.2            reshape2_1.4.4       R6_2.5.1            
+[73] lubridate_1.8.0      knitr_1.41           fastmap_1.1.0       
+[76] future.apply_1.9.0   utf8_1.2.2           workflowr_1.7.0     
+[79] mathjaxr_1.6-0       rprojroot_2.0.3      stringi_1.7.6       
+[82] parallel_4.1.1       Rcpp_1.0.8.3         vctrs_0.4.1         
+[85] rpart_4.1-15         tidyselect_1.1.2     xfun_0.35           </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

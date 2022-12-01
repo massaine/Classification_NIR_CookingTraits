@@ -9,15 +9,126 @@ editor_options:
 
 ## Introduction
 ```{r}
+library("lme4"); library(tidyverse)
+library("EnvStats")
+library("ggridges")
+library(gt)
 library(dplyr)
+library("gdata")
+library(stringr)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+
+```{r, eval = F}
+#load(file=here::here("output","dadosASD.RData"))
+dados <- subset(dados,dados$Type=="Mashed")
+
+#load(file=here::here("output","dadosBUCHI.RData"))
+#dados <- subset(dados,dados$Type=="Mashed")
+
+dados$block_number <- factor(dados$block_number)
+dados$Trial <- as.factor(dados$Trial)
 
 ```
 
+### ANAVA by trial
+```{r, eval = F}
+model <- list()
+traits <- colnames(dados[,14:ncol(dados)])
+Trials <- levels(dados$Trial)
+model <- list()
+h2Trial <- matrix(NA,nrow=length(traits),ncol = length(Trials))
+
+
+for (j in 1:length(Trials)) {
+  h2 <- matrix(NA,ncol=length(traits),nrow = )
+  
+  dados1 <- subset(dados,dados$Trial==Trials[j]) %>%                                    droplevels(.$block_number)  
+  dados1$accession_name <- droplevels(dados1$accession_name)
+  dados1[,14:ncol(dados1)] <- sapply(dados1[,14:ncol(dados1)],
+                                     as.numeric)
+  
+  for (i in 1:length(traits)) { 
+   model <- lmer(dados1[,13+i] ~ (1|accession_name) + (block_number) , 
+                     data=dados1) 
+  
+  vg <- (summary(model)$varcor$accession_name[1])
+  ve <- ((summary(model)$sigma)^2)
+  h2[i] <- round(vg/(vg+ve),3)
+  }
+  h2Trial[,j] <- h2
+}
+  
+rownames(h2Trial) <- colnames(dados)[14:ncol(dados)]
+colnames(h2Trial) <- Trials
+x <- "x"
+#save(h2Trial,x,Trials,file=here::here("output","H2_Spectra_BUCHI.RData"))
+```
+
+### h2 mean by trial
+```{r}
+load(file=here::here("output","H2_Spectra_ASD.RData"))
+
+Med <- as.data.frame(round(colMeans(h2Trial),3)) 
+Med$Trial <- Trials
+colnames(Med) <- c("h2","Trial")
+Med %>%  gt()  %>%    
+  tab_options(table.font.size = pct(75))
+```
+
+### pLOT h2
+```{r, eval=F}
+h2T <- t(h2Trial)
+x <- (unmatrix(h2T,byrow=TRUE))
+names <- names(x)
+x <- as.data.frame(x)
+trial_WL <- str_split_fixed(names, ":", 2)
+x$Trial <- as.factor(trial_WL[,1])
+x$Wavelength <- as.numeric(trial_WL[,2])
+x$h2 <- as.numeric(as.character(x$x))
+```
 
 ```{r}
-load(file=here::here("output","dadosASD.RData"))
-dados <- dados[,1:100]
-
+ggplot(data= x, aes(x=Wavelength, y=h2, group=Trial, colour=Trial)) +
+  geom_line() + scale_colour_manual(values =  rainbow(15)) +
+  xlab("Wavelength") + ylab("Mean absorbance FT-NIR") + theme_bw()
 
 ```
+
+
+### h2 mean by trial BUCHI
+```{r}
+load(file=here::here("output","H2_Spectra_BUCHI.RData"))
+
+Med <- as.data.frame(round(colMeans(h2Trial),3)) 
+Med$Trial <- Trials
+colnames(Med) <- c("h2","Trial")
+Med %>%  gt()  %>%    
+  tab_options(table.font.size = pct(75))
+```
+
+### pLOT h2
+```{r, eval=F}
+h2T <- t(h2Trial)
+x <- (unmatrix(h2T,byrow=TRUE))
+names <- names(x)
+x <- as.data.frame(x)
+trial_WL <- str_split_fixed(names, ":", 2)
+x$Trial <- as.factor(trial_WL[,1])
+x$Wavelength <- as.numeric(trial_WL[,2])
+x$h2 <- as.numeric(as.character(x$x))
+```
+
+```{r}
+x <- x[!x$Trial=="BR.CETBAGRec.19.UFRB",]
+x <- x[!x$Trial=="BR.PYTGS.19RA1",]
+
+ggplot(data= x, aes(x=Wavelength, y=h2, group=Trial, colour=Trial)) +
+  geom_line() + scale_colour_manual(values =  rainbow(16)) +
+  xlab("Wavelength") + ylab("Mean absorbance FT-NIR") + theme_bw()
+
+```
+
 

@@ -13,7 +13,7 @@
 
 <meta name="date" content="2022-11-25" />
 
-<title>Spectra_PreTreatment</title>
+<title>Load_Dataset</title>
 
 <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -351,7 +351,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Spectra_PreTreatment</h1>
+<h1 class="title toc-ignore">Load_Dataset</h1>
 <h4 class="author">massaine</h4>
 <h4 class="date">2022-11-25</h4>
 
@@ -485,7 +485,6 @@ Note that you need to be careful to ensure that all relevant files for the analy
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    data/2020-DadosNIRASD_fen_BR.PYTGS.19.txt
     Ignored:    data/2020-DadosNIRBUCHI_fen_PYTGS.CETBAG.19.txt
@@ -513,8 +512,6 @@ Untracked files:
 Unstaged changes:
     Modified:   analysis/Load_Dataset.Rmd
     Modified:   analysis/Pre_treatment_Accuracy.Rmd
-    Modified:   analysis/Spectra_PreTreatment.Rmd
-    Modified:   analysis/Spectra_parameters.Rmd
     Modified:   analysis/_site.yml
 
 </code></pre>
@@ -530,7 +527,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Spectra_PreTreatment.Rmd</code>) and HTML (<code>docs/Spectra_PreTreatment.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Load_Dataset.Rmd</code>) and HTML (<code>docs/Load_Dataset.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -559,24 +556,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/b79ab80838fe43bf4afc00188844a3703aebc639/analysis/Spectra_PreTreatment.Rmd" target="_blank">b79ab80</a>
-</td>
-<td>
-massaine
-</td>
-<td>
-2022-11-30
-</td>
-<td>
-Third commit
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/massaine/Classification_NIR_CookingTraits/b79ab80838fe43bf4afc00188844a3703aebc639/docs/Spectra_PreTreatment.html" target="_blank">b79ab80</a>
+<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/b79ab80838fe43bf4afc00188844a3703aebc639/analysis/Load_Dataset.Rmd" target="_blank">b79ab80</a>
 </td>
 <td>
 massaine
@@ -593,7 +573,24 @@ Third commit
 Rmd
 </td>
 <td>
-<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/dc9e0ad54e62c1f897296be811626aed7c8b168e/analysis/Spectra_PreTreatment.Rmd" target="_blank">dc9e0ad</a>
+<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/8efae9847f481b3b9a3132349cff97eb3ab90394/analysis/Load_Dataset.Rmd" target="_blank">8efae98</a>
+</td>
+<td>
+massaine
+</td>
+<td>
+2022-11-28
+</td>
+<td>
+second commit
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/massaine/Classification_NIR_CookingTraits/blob/dc9e0ad54e62c1f897296be811626aed7c8b168e/analysis/Load_Dataset.Rmd" target="_blank">dc9e0ad</a>
 </td>
 <td>
 massaine
@@ -612,192 +609,248 @@ First commit
 </div>
 </div>
 </div>
-<div id="packages" class="section level2">
-<h2>Packages</h2>
-<pre class="r"><code>options(stringsAsFactors=FALSE)
-library(prospectr)</code></pre>
-<pre><code>Warning: package &#39;prospectr&#39; was built under R version 4.1.3</code></pre>
-<pre><code>[34mprospectr version 0.2.4 -- [39m&#39;mandarina&#39;</code></pre>
-<pre><code>[34mcheck the github repository at: https://github.com/l-ramirez-lopez/prospectr/[39m</code></pre>
-<pre class="r"><code>library(caret)</code></pre>
-<pre><code>Warning: package &#39;caret&#39; was built under R version 4.1.3</code></pre>
-<pre><code>Carregando pacotes exigidos: ggplot2</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.1.3</code></pre>
-<pre><code>Carregando pacotes exigidos: lattice</code></pre>
-<pre class="r"><code>library(mlbench)
-library(pROC)</code></pre>
-<pre><code>Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</code></pre>
+<div id="load-spectral-and-phenotype-data" class="section level2">
+<h2>Load Spectral and Phenotype data</h2>
+<div id="data-struture" class="section level3">
+<h3>Data struture:</h3>
+</div>
+<div id="trial-plot_name-acession_name-plot-block-cook15-cook20-cook25-cook30-cook40-spectra-data" class="section level3">
+<h3>Trial, plot_name, acession_name, Plot, Block, Cook15, Cook20, Cook25, Cook30, Cook40, + Spectra data</h3>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 4.1.3</code></pre>
 <pre><code>
-Attaching package: &#39;pROC&#39;</code></pre>
+Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>The following objects are masked from &#39;package:stats&#39;:
 
-    cov, smooth, var</code></pre>
-<pre class="r"><code>library(C50)</code></pre>
-<pre><code>Warning: package &#39;C50&#39; was built under R version 4.1.3</code></pre>
-<pre class="r"><code>library(plsRglm)</code></pre>
-<pre><code>Warning: package &#39;plsRglm&#39; was built under R version 4.1.3</code></pre>
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(stringr)</code></pre>
 <pre><code>Warning: package &#39;stringr&#39; was built under R version 4.1.3</code></pre>
-<pre class="r"><code>library(workflowr)</code></pre>
-<pre><code>Warning: package &#39;workflowr&#39; was built under R version 4.1.3</code></pre>
-<pre><code>This is workflowr version 1.7.0
-Run ?workflowr for help getting started</code></pre>
-<pre class="r"><code>amostra &lt;- &quot;Mashed&quot;
-Cooking_traits &lt;- c(&quot;Cook15&quot;,&quot;Cook20&quot;,&quot;Cook25&quot;,&quot;Cook30&quot;,&quot;Cook40&quot;)</code></pre>
-<pre class="r"><code>#NIR &lt;- &quot;ASD&quot;
-#load(file=here::here(&quot;output&quot;,&quot;dadosASD.RData&quot;))
-#dados &lt;-  subset(dados,dados$Type==amostra)
+<pre class="r"><code>Cooking_traits &lt;- c(&quot;Cook15&quot;,&quot;Cook20&quot;,&quot;Cook25&quot;,&quot;Cook30&quot;,&quot;Cook40&quot;)</code></pre>
+</div>
+<div id="dados-asd" class="section level3">
+<h3>Dados ASD</h3>
+<pre class="r"><code>dados2020 &lt;- read.table(file=here::here(&quot;data&quot;,&quot;2020-DadosNIRASD_fen_BR.PYTGS.19.txt&quot;), header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;, strip.white=TRUE, check.names=FALSE)
+dados2020 &lt;- dados2020[!is.na(dados2020$`350`),]
+dados2020 &lt;- cbind(dados2020[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2020[21:ncol(dados2020)])
 
-NIR &lt;- &quot;BUCHI&quot;
-load(file=here::here(&quot;output&quot;,&quot;dadosBUCHI.RData&quot;))</code></pre>
-<div id="removing-outliars" class="section level3">
-<h3>Removing outliars</h3>
-<pre class="r"><code>data &lt;- list()
-full.sd &lt;- list()
-results&lt;- list()
-geno &lt;- unique(dados$Mult6C)                                 
 
-for(i in 1:length(geno)){
+dados2021 &lt;- read.table(file=here::here(&quot;data&quot;,&quot;2021-DadosNIRASD_Cook.txt&quot;), header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;,
+                        strip.white=TRUE, check.names=FALSE)
+dados2021 &lt;- cbind(dados2021[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2021[16:ncol(dados2021)])
+
+dados2022&lt;-read.table(file=here::here(&quot;data&quot;,&quot;2022_DadosNIRASD_Cook.txt&quot;), 
+                      header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;,
+                      strip.white=TRUE, check.names=FALSE)
+dados2022 &lt;- cbind(dados2022[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2022[12:ncol(dados2022)])
+
+dados &lt;- rbind(dados2020,dados2021,dados2022)
+dados &lt;- dados[!is.na(dados$Cook15),]
+dados &lt;- dados[!is.na(dados$Cook20),]
+dados &lt;- dados[!is.na(dados$Cook25),]
+dados &lt;- dados[!is.na(dados$Cook30),]
+dados &lt;- dados[!is.na(dados$Cook40),]
+dados &lt;- droplevels(dados)
+
+dados$Cook15 &lt;- as.factor(dados$Cook15)
+dados$Cook20 &lt;- as.factor(dados$Cook20)
+dados$Cook25 &lt;- as.factor(dados$Cook25)
+dados$Cook30 &lt;- as.factor(dados$Cook30)
+dados$Cook40 &lt;- as.factor(dados$Cook40)
+
+levels(dados$Cook15) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook20) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook25) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook30) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook40) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
   
-  data[[i]] &lt;- dados[dados$Mult6C==geno[i],]
-  full.sd &lt;- transform(data[[i]], SD=apply(data[[i]][,14:ncol(data[[i]])], 
-                                           1, sd, na.rm = TRUE))
-  full.sd.sd &lt;- sd(full.sd$SD, na.rm=TRUE)
-  cutoff &lt;- 1.5*full.sd.sd
-  sd.mean &lt;- mean(full.sd$SD, na.rm=TRUE)
-  results[[i]] &lt;- data[[i]][which(as.logical((sd.mean-cutoff&lt;full.sd$SD)*
-                                               (full.sd$SD&lt;sd.mean+cutoff))),
-                            ]}</code></pre>
-<pre><code>Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm =
-na.rm): NAs introduzidos por coerção</code></pre>
-<pre class="r"><code>#### Joint varieties without outliers in a matrix
-dados_semOut &lt;- do.call(rbind,results)  
-dados_semOut$Type &lt;- NULL
-table(dados$Mult6C)</code></pre>
-<pre><code>
-15min 20min 25min 30min 40min    No 
-  466   600   660   394   383  6358 </code></pre>
-<pre class="r"><code>table(dados_semOut$Mult6C)</code></pre>
-<pre><code>
-15min 20min 25min 30min 40min    No 
-  445   510   571   348   334  5496 </code></pre>
+dados$accession_name &lt;- as.factor(dados$accession_name)
+dados$accession_name &lt;- recode(dados$accession_name, 
+                                &quot;EucxRox&quot; = &quot;EucaliptoXRoxinha&quot;, 
+                                &quot;BRS-GemaOvo&quot; = &quot;BRS-Gema-de-Ovo&quot;,
+                                &quot;Aipim-Brasil&quot; = &quot;Aipim Brasil&quot;,
+                                &quot;Aipim-Abacate&quot; = &quot;AipimAbacate&quot;)  
+
+dados$Type &lt;- as.factor(dados$Type)
+levels(as.factor(dados$Type))  
+levels(dados$Type) &lt;- c(&quot;Fresh Root&quot;,&quot;Mashed&quot;,&quot;Mashed&quot;)</code></pre>
 </div>
-<div id="raw-data" class="section level3">
-<h3>1) raw data</h3>
-<pre class="r"><code>pt &lt;- list()
-
-raw &lt;- dados_semOut[,13:ncol(dados_semOut)]
-raw &lt;- sapply(raw[,c(1:ncol(raw))],as.numeric)
-
-plot(as.numeric(colnames(raw)), 
-     raw[1,], type = &quot;l&quot;,lwd = 1.5, xlab = &quot;Wavelength, nm&quot;,
-     main = &quot;raw data&quot;,ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[1]] &lt;- (blockNorm(X = raw, targetnorm = 1)$Xscaled)</code></pre>
+<div id="creating-multi-classes-trait-asd" class="section level3">
+<h3>creating multi classes trait ASD</h3>
+<pre class="r"><code>dados1 &lt;- dados[,Cooking_traits]
+dados1$Cook15 &lt;- gsub(&quot;Yes&quot;,&quot;15min&quot;,dados1$Cook15)
+dados1$Cook20 &lt;- gsub(&quot;Yes&quot;,&quot;20min&quot;,dados1$Cook20)
+dados1$Cook25 &lt;- gsub(&quot;Yes&quot;,&quot;25min&quot;,dados1$Cook25)
+dados1$Cook30 &lt;- gsub(&quot;Yes&quot;,&quot;30min&quot;,dados1$Cook30)
+dados1$Cook40 &lt;- gsub(&quot;Yes&quot;,&quot;40min&quot;,dados1$Cook40)
+dados1$Mult6C &lt;- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = &quot;&quot;,
+                                 collapse = NULL))
+levels(dados1$Mult6C) &lt;- c(&quot;15min&quot;,&quot;20min&quot;,&quot;25min&quot;,&quot;30min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados1$Mult4C &lt;- dados1$Mult6C
+levels(dados1$Mult4C) &lt;- c(&quot;15min&quot;,&quot;25min&quot;,&quot;25min&quot;,&quot;40min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados &lt;- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])</code></pre>
 </div>
-<div id="first-derivative" class="section level3">
-<h3>2) first derivative</h3>
-<pre class="r"><code>d1 &lt;- t(diff(t(raw), differences = 1,lag = 10))
-
-plot(as.numeric(colnames(d1)), 
-     d1[1,], type = &quot;l&quot;,lwd = 1.5, xlab = &quot;Wavelength, nm&quot;,
-      main = &quot;1st&quot;, ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[2]] &lt;- round(blockNorm(X = d1, targetnorm = 1)$Xscaled,12)</code></pre>
+<div id="save-data" class="section level3">
+<h3>save data</h3>
+<pre class="r"><code>#save(dados, file = here::here(&quot;output&quot;, &quot;dadosASD.RData&quot;))</code></pre>
 </div>
-<div id="dt" class="section level3">
-<h3>3) DT</h3>
-<pre class="r"><code>raw_dt &lt;- detrend(X =raw, wav = as.numeric(colnames(raw)))
+<div id="dados-buchi" class="section level3">
+<h3>Dados BUCHI</h3>
+<pre class="r"><code>dados2020 &lt;- read.table(file=here::here(&quot;data&quot;,&quot;2020-DadosNIRBUCHI_fen_PYTGS.CETBAG.19.txt&quot;), header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;, strip.white=TRUE, check.names=FALSE)
+dados2020 &lt;- dados2020[!is.na(dados2020$`1000`),]
+dados2020 &lt;- cbind(dados2020[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2020[20:ncol(dados2020)])
 
-plot(as.numeric(colnames(raw_dt)), 
-     raw_dt[1,], type = &quot;l&quot;,main = &quot;raw + DT&quot;,lwd = 1.5, 
-     xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[3]] &lt;- round(blockNorm(X = raw_dt, targetnorm = 1)$Xscaled,12)</code></pre>
+dados2021 &lt;- read.table(file=here::here(&quot;data&quot;,&quot;2021-DadosNIRBUCHI_Cook.txt&quot;), header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;,
+                        strip.white=TRUE, check.names=FALSE)
+dados2021 &lt;- cbind(dados2021[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2021[18:ncol(dados2021)])
+
+dados2022&lt;-read.table(file=here::here(&quot;data&quot;,&quot;2022_DadosNIRBUCHI_Cook.txt&quot;), 
+                      header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;,
+                      strip.white=TRUE, check.names=FALSE)
+dados2022 &lt;- cbind(dados2022[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2022[12:ncol(dados2022)])
+
+dados &lt;- rbind(dados2020,dados2021,dados2022)
+dados &lt;- dados[!is.na(dados$Cook15),]
+dados &lt;- dados[!is.na(dados$Cook20),]
+dados &lt;- dados[!is.na(dados$Cook25),]
+dados &lt;- dados[!is.na(dados$Cook30),]
+dados &lt;- dados[!is.na(dados$Cook40),]
+dados &lt;- droplevels(dados)
+
+dados$Cook15 &lt;- as.factor(dados$Cook15)
+dados$Cook20 &lt;- as.factor(dados$Cook20)
+dados$Cook25 &lt;- as.factor(dados$Cook25)
+dados$Cook30 &lt;- as.factor(dados$Cook30)
+dados$Cook40 &lt;- as.factor(dados$Cook40)
+
+levels(dados$Cook15) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook20) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook25) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook30) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+levels(dados$Cook40) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+  
+dados$accession_name &lt;- as.factor(dados$accession_name)
+dados$accession_name &lt;- recode(dados$accession_name, 
+                               # &quot;EucxRox&quot; = &quot;EucaliptoXRoxinha&quot;, 
+                                &quot;BRS-GemaOvo&quot; = &quot;BRS-Gema-de-Ovo&quot;,
+                                &quot;Aipim-Brasil&quot; = &quot;Aipim Brasil&quot;,
+                                &quot;Aipim-Abacate&quot; = &quot;AipimAbacate&quot;)  </code></pre>
 </div>
-<div id="msc" class="section level3">
-<h3>4) MSC</h3>
-<pre class="r"><code>raw_msc &lt;- msc(X = raw, ref_spectrum = colMeans(raw))
-
-plot(as.numeric(colnames(raw_msc)), 
-     raw_msc[1,],type = &quot;l&quot;,main = &quot;MSC&quot;,lwd = 1.5, 
-     xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[4]] &lt;- round(blockNorm(X = raw_msc, targetnorm = 1)$Xscaled,12)</code></pre>
+<div id="creating-multi-classes-trait-buchi" class="section level3">
+<h3>creating multi classes trait BUCHI</h3>
+<pre class="r"><code>dados1 &lt;- dados[,Cooking_traits]
+dados1$Cook15 &lt;- gsub(&quot;Yes&quot;,&quot;15min&quot;,dados1$Cook15)
+dados1$Cook20 &lt;- gsub(&quot;Yes&quot;,&quot;20min&quot;,dados1$Cook20)
+dados1$Cook25 &lt;- gsub(&quot;Yes&quot;,&quot;25min&quot;,dados1$Cook25)
+dados1$Cook30 &lt;- gsub(&quot;Yes&quot;,&quot;30min&quot;,dados1$Cook30)
+dados1$Cook40 &lt;- gsub(&quot;Yes&quot;,&quot;40min&quot;,dados1$Cook40)
+dados1$Mult6C &lt;- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = &quot;&quot;,
+                                 collapse = NULL))
+levels(dados1$Mult6C) &lt;- c(&quot;15min&quot;,&quot;15min&quot;,&quot;20min&quot;,&quot;25min&quot;,&quot;30min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados1$Mult4C &lt;- dados1$Mult6C
+levels(dados1$Mult4C) &lt;- c(&quot;15min&quot;,&quot;25min&quot;,&quot;25min&quot;,&quot;40min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados &lt;- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])</code></pre>
 </div>
-<div id="snv" class="section level3">
-<h3>5) SNV</h3>
-<pre class="r"><code>raw_snv &lt;- standardNormalVariate(X = raw)
-
-plot(as.numeric(colnames(raw_snv)), 
-     raw_snv[1,], type = &quot;l&quot;,main =&quot;1st + SNV&quot;,
-     lwd = 1.5, xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[5]] &lt;- round(blockNorm(X = raw_snv, targetnorm = 1)$Xscaled,12)</code></pre>
+<div id="save-data-buchi" class="section level3">
+<h3>Save data BUCHI</h3>
+<pre class="r"><code>#save(dados, file = here::here(&quot;output&quot;, &quot;dadosBUCHI.RData&quot;))</code></pre>
 </div>
-<div id="st-dt" class="section level3">
-<h3>6) 1st + DT</h3>
-<pre class="r"><code>d1_dt &lt;- detrend(X =d1, wav = as.numeric(colnames(d1)))
-
-plot(as.numeric(colnames(d1_dt)), 
-     d1_dt[1,], type = &quot;l&quot;,main = &quot;1st + DT&quot;,lwd = 1.5, 
-     xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[6]] &lt;- round(blockNorm(X = d1_dt, targetnorm = 1)$Xscaled,12)</code></pre>
 </div>
-<div id="st-msc" class="section level3">
-<h3>7) 1st + MSC</h3>
-<pre class="r"><code>d1_msc &lt;- msc(X = d1, ref_spectrum = colMeans(d1))
+<div id="dados-scio" class="section level2">
+<h2>Dados SCIO</h2>
+<pre class="r"><code>dados2022&lt;-read.table(file=here::here(&quot;data&quot;,&quot;2022_DadosNIRSCIO_Cook.txt&quot;), 
+                      header=T, sep=&quot;\t&quot;, na.strings=&quot;NA&quot;,
+                      strip.white=TRUE, check.names=FALSE)
+dados2022 &lt;- cbind(dados2022[,c(&quot;Trial&quot;,&quot;plot_name&quot;,
+                                &quot;accession_name&quot;,
+                                &quot;plot_number&quot;,
+                                &quot;block_number&quot;,
+                                Cooking_traits,&quot;Type&quot;)],
+                                dados2022[12:ncol(dados2022)])
 
-plot(as.numeric(colnames(d1_msc)), 
-     d1_msc[1,],type = &quot;l&quot;,main = &quot;1st + MSC&quot;,lwd = 1.5, 
-     xlab = &quot;Wavelength, nm&quot;, ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[7]] &lt;- round(blockNorm(X = d1_msc, targetnorm = 1)$Xscaled,12)</code></pre>
+dados &lt;- dados2022
+dados &lt;- dados[!is.na(dados$Cook15),]
+dados &lt;- dados[!is.na(dados$Cook20),]
+dados &lt;- dados[!is.na(dados$Cook25),]
+dados &lt;- dados[!is.na(dados$Cook30),]
+dados &lt;- dados[!is.na(dados$Cook40),]
+dados &lt;- droplevels(dados)
+
+dados$Cook15 &lt;- as.factor(dados$Cook15)
+dados$Cook20 &lt;- as.factor(dados$Cook20)
+dados$Cook25 &lt;- as.factor(dados$Cook25)
+dados$Cook30 &lt;- as.factor(dados$Cook30)
+dados$Cook40 &lt;- as.factor(dados$Cook40)
+
+#levels(dados$Cook15) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+#levels(dados$Cook20) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+#levels(dados$Cook25) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+#levels(dados$Cook30) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+#levels(dados$Cook40) &lt;- c(&quot;No&quot;,&quot;No&quot;,&quot;Yes&quot;,&quot;Yes&quot;)
+  
+dados$accession_name &lt;- as.factor(dados$accession_name)
+levels(as.factor(dados$accession_name))  
+
+dados$accession_name &lt;- recode(dados$accession_name, 
+                               # &quot;EucxRox&quot; = &quot;EucaliptoXRoxinha&quot;, 
+                                &quot;BRS-GemaOvo&quot; = &quot;BRS-Gema-de-Ovo&quot;)  
+
+dados$Type &lt;- as.factor(dados$Type)
+levels(as.factor(dados$Type))  
+levels(dados$Type) &lt;- c(&quot;Fresh Root&quot;,&quot;Mashed&quot;,&quot;Mashed&quot;)</code></pre>
+<div id="creating-multi-classes-trait-scio" class="section level3">
+<h3>creating multi classes trait SCIO</h3>
+<pre class="r"><code>dados1 &lt;- dados[,Cooking_traits]
+dados1$Cook15 &lt;- gsub(&quot;Yes&quot;,&quot;15min&quot;,dados1$Cook15)
+dados1$Cook20 &lt;- gsub(&quot;Yes&quot;,&quot;20min&quot;,dados1$Cook20)
+dados1$Cook25 &lt;- gsub(&quot;Yes&quot;,&quot;25min&quot;,dados1$Cook25)
+dados1$Cook30 &lt;- gsub(&quot;Yes&quot;,&quot;30min&quot;,dados1$Cook30)
+dados1$Cook40 &lt;- gsub(&quot;Yes&quot;,&quot;40min&quot;,dados1$Cook40)
+dados1$Mult6C &lt;- as.factor(str_c(dados1$Cook15,dados1$Cook20,dados1$Cook25,
+                                 dados1$Cook30,dados1$Cook40,sep = &quot;&quot;,
+                                 collapse = NULL))
+levels(dados1$Mult6C) &lt;- c(&quot;15min&quot;,&quot;20min&quot;,&quot;25min&quot;,&quot;30min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados1$Mult4C &lt;- dados1$Mult6C
+levels(dados1$Mult4C) &lt;- c(&quot;15min&quot;,&quot;25min&quot;,&quot;25min&quot;,&quot;40min&quot;,&quot;40min&quot;,&quot;No&quot;)
+dados &lt;- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])</code></pre>
 </div>
-<div id="dt-msc" class="section level3">
-<h3>8) DT + MSC</h3>
-<pre class="r"><code>dt_msc &lt;- msc(X = raw_dt, ref_spectrum = colMeans(raw_dt))
-
-plot(as.numeric(colnames(dt_msc)), 
-     dt_msc[1,],type = &quot;l&quot;,main = &quot;DT + MSC&quot;,lwd = 1.5, 
-     xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[8]] &lt;- round(blockNorm(X = dt_msc, targetnorm = 1)$Xscaled,12)</code></pre>
-</div>
-<div id="st-sg-dt" class="section level3">
-<h3>9) 1st + SG + DT</h3>
-<pre class="r"><code>d1_sg &lt;- savitzkyGolay(d1, p = 3, w = 11, m = 0)
-d1_sg_dt &lt;- detrend(X =d1_sg, wav = as.numeric(colnames(d1_sg)))
-
-plot(as.numeric(colnames(d1_sg_dt)), 
-     d1_sg_dt[1,], type = &quot;l&quot;,main = &quot;1st + SG + DT&quot;,
-     lwd = 1.5, xlab = &quot;Wavelength, nm&quot;, 
-     ylab = &quot;Absorbance&quot;)</code></pre>
-<p><img src="figure/Spectra_PreTreatment.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>pt[[9]] &lt;- round(blockNorm(X = d1_sg_dt, targetnorm = 1)$Xscaled,12)</code></pre>
-<pre class="r"><code>dados2 &lt;- list()
-
-for (i in 1:9) {
-      x &lt;-cbind(as.matrix(dados_semOut[,1:12]),pt[[i]])
-      dados2[[i]]&lt;-as.data.frame(x)
-      n &lt;- ncol(dados2[[i]])
-      dados2[[i]][,c(13:n)] &lt;- sapply(dados2[[i]][,c(13:n)], 
-                               as.numeric)
-}
-
-#str(dados2)</code></pre>
-</div>
-<div id="save-rdata-pretreatment-methods" class="section level3">
-<h3>Save RData + pretreatment methods</h3>
-<pre class="r"><code>if(NIR==&quot;ASD&quot;){save(dados2,file = here::here(&quot;output&quot;,&quot;dadosASD_Mas_PT.RData&quot;))}
-
-if(NIR==&quot;BUCHI&quot;){save(dados2,file =here::here(&quot;output&quot;,&quot;dadosBUCHI_Mas_PT.RData&quot;))}</code></pre>
+<div id="save-data-scio" class="section level3">
+<h3>SAVE DATA SCIO</h3>
+<pre class="r"><code>#save(dados, file = here::here(&quot;output&quot;, &quot;dadosSCIO.RData&quot;))</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -821,50 +874,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] workflowr_1.7.0 stringr_1.4.1   plsRglm_1.5.0   C50_0.1.6      
- [5] pROC_1.18.0     mlbench_2.1-3   caret_6.0-92    lattice_0.20-44
- [9] ggplot2_3.3.6   prospectr_0.2.4
+[1] stringr_1.4.1 dplyr_1.0.9  
 
 loaded via a namespace (and not attached):
-  [1] Cubist_0.4.0         colorspace_2.0-3     ellipsis_0.3.2      
-  [4] class_7.3-19         rprojroot_2.0.3      fs_1.5.2            
-  [7] rstudioapi_0.13      listenv_0.8.0        prodlim_2019.11.13  
- [10] fansi_1.0.3          mvtnorm_1.1-3        lubridate_1.8.0     
- [13] mathjaxr_1.6-0       codetools_0.2-18     splines_4.1.1       
- [16] libcoin_1.0-9        knitr_1.41           spam_2.8-0          
- [19] Formula_1.2-4        jsonlite_1.8.0       cluster_2.1.2       
- [22] httr_1.4.3           compiler_4.1.1       assertthat_0.2.1    
- [25] Matrix_1.3-4         fastmap_1.1.0        cli_3.3.0           
- [28] later_1.3.0          htmltools_0.5.2      tools_4.1.1         
- [31] igraph_1.3.1         partykit_1.2-15      dotCall64_1.0-1     
- [34] coda_0.19-4          gtable_0.3.0         glue_1.6.2          
- [37] reshape2_1.4.4       dplyr_1.0.9          maps_3.4.0          
- [40] Rcpp_1.0.8.3         carData_3.0-5        statnet.common_4.6.0
- [43] jquerylib_0.1.4      vctrs_0.4.1          nlme_3.1-152        
- [46] iterators_1.0.14     timeDate_3043.102    inum_1.0-4          
- [49] gower_1.0.0          xfun_0.35            ps_1.7.0            
- [52] globals_0.15.1       network_1.17.2       lifecycle_1.0.1     
- [55] future_1.26.1        getPass_0.2-2        MASS_7.3-54         
- [58] scales_1.2.0         ipred_0.9-13         promises_1.2.0.1    
- [61] parallel_4.1.1       fields_13.3          yaml_2.3.5          
- [64] gridExtra_2.3        sass_0.4.1           rpart_4.1-15        
- [67] stringi_1.7.6        bipartite_2.17       highr_0.9           
- [70] foreach_1.5.2        permute_0.9-7        boot_1.3-28         
- [73] hardhat_1.0.0        lava_1.6.10          rlang_1.0.2         
- [76] pkgconfig_2.0.3      evaluate_0.15        purrr_0.3.4         
- [79] recipes_0.2.0        processx_3.5.3       tidyselect_1.1.2    
- [82] here_1.0.1           parallelly_1.32.0    plyr_1.8.7          
- [85] magrittr_2.0.3       R6_2.5.1             generics_0.1.2      
- [88] sna_2.7              DBI_1.1.2            pillar_1.7.0        
- [91] whisker_0.4          withr_2.5.0          mgcv_1.8-36         
- [94] abind_1.4-5          survival_3.2-11      nnet_7.3-16         
- [97] tibble_3.1.7         future.apply_1.9.0   car_3.0-13          
-[100] crayon_1.5.1         utf8_1.2.2           rmarkdown_2.18      
-[103] viridis_0.6.2        grid_4.1.1           data.table_1.14.2   
-[106] callr_3.7.0          git2r_0.30.1         vegan_2.6-2         
-[109] ModelMetrics_1.2.2.2 digest_0.6.29        httpuv_1.6.5        
-[112] stats4_4.1.1         munsell_0.5.0        viridisLite_0.4.0   
-[115] bslib_0.3.1         </code></pre>
+ [1] Rcpp_1.0.8.3     pillar_1.7.0     compiler_4.1.1   bslib_0.3.1     
+ [5] later_1.3.0      jquerylib_0.1.4  git2r_0.30.1     workflowr_1.7.0 
+ [9] tools_4.1.1      digest_0.6.29    jsonlite_1.8.0   evaluate_0.15   
+[13] lifecycle_1.0.1  tibble_3.1.7     pkgconfig_2.0.3  rlang_1.0.2     
+[17] DBI_1.1.2        cli_3.3.0        rstudioapi_0.13  yaml_2.3.5      
+[21] xfun_0.35        fastmap_1.1.0    knitr_1.41       generics_0.1.2  
+[25] fs_1.5.2         vctrs_0.4.1      sass_0.4.1       tidyselect_1.1.2
+[29] rprojroot_2.0.3  glue_1.6.2       R6_2.5.1         fansi_1.0.3     
+[33] rmarkdown_2.18   purrr_0.3.4      magrittr_2.0.3   whisker_0.4     
+[37] promises_1.2.0.1 ellipsis_0.3.2   htmltools_0.5.2  assertthat_0.2.1
+[41] httpuv_1.6.5     utf8_1.2.2       stringi_1.7.6    crayon_1.5.1    </code></pre>
 </div>
 </div>
 </div>

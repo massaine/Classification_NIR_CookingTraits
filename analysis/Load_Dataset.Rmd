@@ -9,16 +9,16 @@ editor_options:
 
 ## Load Spectral and Phenotype data
 ### Data struture:
+```{r, eval = F}
 ### Trial, plot_name, acession_name, Plot, Block, Cook15, Cook20, Cook25, Cook30, Cook40, + Spectra data
-   
-```{r}
+
 library(dplyr)
 library(stringr)
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 ```
    
 ### Dados ASD
-```{r}
+```{r, eval = F}
 dados2020 <- read.table(file=here::here("data","2020-DadosNIRASD_fen_BR.PYTGS.19.txt"), header=T, sep="\t", na.strings="NA", strip.white=TRUE, check.names=FALSE)
 dados2020 <- dados2020[!is.na(dados2020$`350`),]
 dados2020 <- cbind(dados2020[,c("Trial","plot_name",
@@ -81,7 +81,7 @@ levels(dados$Type) <- c("Fresh Root","Mashed","Mashed")
 ```
 
 ### creating multi classes trait ASD
-```{r}
+```{r, eval = F}
 dados1 <- dados[,Cooking_traits]
 dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
 dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
@@ -104,7 +104,7 @@ dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
 
 
 ### Dados BUCHI
-```{r}
+```{r, eval = F}
 dados2020 <- read.table(file=here::here("data","2020-DadosNIRBUCHI_fen_PYTGS.CETBAG.19.txt"), header=T, sep="\t", na.strings="NA", strip.white=TRUE, check.names=FALSE)
 dados2020 <- dados2020[!is.na(dados2020$`1000`),]
 dados2020 <- cbind(dados2020[,c("Trial","plot_name",
@@ -162,7 +162,7 @@ dados$accession_name <- recode(dados$accession_name,
 ```
 
 ### creating multi classes trait BUCHI
-```{r}
+```{r, eval = F}
 dados1 <- dados[,Cooking_traits]
 dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
 dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
@@ -181,12 +181,12 @@ dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
 
 ### Save data BUCHI
 ```{r}
-save(dados, file = here::here("output", "dadosBUCHI.RData"))
+#save(dados, file = here::here("output", "dadosBUCHI.RData"))
 ```
 
 
 ## Dados SCIO
-```{r}
+```{r, eval = F}
 dados2022<-read.table(file=here::here("data","2022_DadosNIRSCIO_Cook.txt"), 
                       header=T, sep="\t", na.strings="NA",
                       strip.white=TRUE, check.names=FALSE)
@@ -231,7 +231,7 @@ levels(dados$Type) <- c("Fresh Root","Mashed","Mashed")
 
 
 ### creating multi classes trait SCIO
-```{r}
+```{r, eval = F}
 dados1 <- dados[,Cooking_traits]
 dados1$Cook15 <- gsub("Yes","15min",dados1$Cook15)
 dados1$Cook20 <- gsub("Yes","20min",dados1$Cook20)
@@ -251,7 +251,7 @@ dados <- cbind(dados[,1:10],dados1[,6:7],dados[,11:ncol(dados)])
 ### SAVE DATA SCIO
 ```{r}
 
-save(dados, file = here::here("output", "dadosSCIO.RData"))
+#save(dados, file = here::here("output", "dadosSCIO.RData"))
 
 ```
 
