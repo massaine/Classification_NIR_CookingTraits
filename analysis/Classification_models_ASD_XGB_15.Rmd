@@ -26,8 +26,8 @@ TRAIT <- "Cook15"
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 modelFit1 <- list()
 
-load(file=here::here("output","dadosASD_Mas_PT.RData"))
-dados1 <- dados2[[7]]
+load(file=here::here("output","dados1_ASD_Mas_PT.RData"))
+
 ```
 
 ### test using PLS model

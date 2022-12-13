@@ -22,11 +22,11 @@ library(gt)
 ###load data
 ```{r}
 NIR <- "ASD"
-TRAIT <- "Cook25"
+TRAIT <- "Cook30"
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 modelFit1 <- list()
 
-load(file=here::here("output","dados1_ASD_Mas.RData"))
+load(file=here::here("output","dados1_ASD_Mas_PT.RData"))
 ```
 
 ### test using PLS model
@@ -37,38 +37,38 @@ ctrl <- trainControl(method="repeatedcv",repeats = 5,
                      verboseIter = FALSE,returnResamp = "all") 
 ```
 
-### Model xgbLinear - Cook15
+### Model parRF - Cook15
 ```{r}
-if(TRAIT=="Cook15"){
-trait <- Cooking_traits[1]
-
-  set.seed(1)
-  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
-  training <- dados1[index, ]
-  testing <- dados1[-index, ]
-  
-  OvSam <- subset(training,training[,trait]=="Yes")
-  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
-  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
-  x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
-  training1 <- rbind(training,x,OvSam[sample1,])#,OvSam[sample1,])
-  table(training1$Cook15)
-  
-  training2 <- cbind(training1[,trait],
-                training1[,c(13:ncol(training1))])
-  colnames(training2)[1] <- trait
-  
-  set.seed(2304)
-  modelFit1[[1]] <- train(Cook15 ~ ., data = training2, 
-                     method = "xgbLinear", trControl = ctrl, 
-                     preProcess = c("center","scale"))
-
-save(testing,modelFit1, 
-     file = here::here("output", "XGB_ASD_Model_Cook15.RData"))
-}
+ if(TRAIT=="Cook15"){
+ trait <- Cooking_traits[1]
+ 
+   set.seed(1)
+   index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+   training <- dados1[index, ]
+   testing <- dados1[-index, ]
+   
+   OvSam <- subset(training,training[,trait]=="Yes")
+   Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
+   sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+   x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+   training1 <- rbind(training,x,OvSam[sample1,])#,OvSam[sample1,])
+   table(training1$Cook15)
+   
+   training2 <- cbind(training1[,trait],
+                 training1[,c(13:ncol(training1))])
+   colnames(training2)[1] <- trait
+   
+   set.seed(2304)
+   modelFit1[[1]] <- train(Cook15 ~ ., data = training2, 
+                      method = "parRF", trControl = ctrl, 
+                      preProcess = c("center","scale"))
+ 
+ save(testing,modelFit1, 
+      file = here::here("output", "RF_ASD_Model_Cook15.RData"))
+ }
 ```
 
-### Model xgbLinear - Cook20
+### Model parRF - Cook20
 ```{r}
 if(TRAIT=="Cook20"){
 trait <- Cooking_traits[2]
@@ -89,15 +89,15 @@ trait <- Cooking_traits[2]
   
   set.seed(2304)
   modelFit1[[2]] <- train(Cook20 ~ ., data = training2, 
-                     method = "xgbLinear", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
 
 save(testing,modelFit1, 
-     file = here::here("output", "XGB_ASD_Model_Cook20.RData"))
+     file = here::here("output", "RF_ASD_Model_Cook20.RData"))
 }
 ```
 
-### Model xgbLinear - Cook25
+### Model parRF - Cook25
 ```{r}
 if(TRAIT=="Cook25"){
 trait <- Cooking_traits[3]
@@ -118,14 +118,14 @@ trait <- Cooking_traits[3]
   
   set.seed(2304)
   modelFit1[[3]] <- train(Cook25 ~ ., data = training2, 
-                     method = "xgbLinear", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
 save(testing,modelFit1, 
-     file = here::here("output", "XGB_ASD_Model_Cook25.RData"))
+     file = here::here("output", "RF_ASD_Model_Cook25.RData"))
 }
 ```
 
-### Model xgbLinear - Cook30
+### Model parRF - Cook30
 ```{r}
 if(TRAIT=="Cook30"){
 trait <- Cooking_traits[4]
@@ -146,15 +146,15 @@ trait <- Cooking_traits[4]
  
   set.seed(2304)
   modelFit1[[4]] <- train(Cook30 ~ ., data = training2, 
-                     method = "xgbLinear", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
 save(testing,modelFit1, 
-     file = here::here("output", "XGB_ASD_Model_Cook30.RData"))
+     file = here::here("output", "RF_ASD_Model_Cook30.RData"))
 }
 ```
 
 
-### Model xgbLinear - Cook40
+### Model parRF - Cook40
 ```{r}
 if(TRAIT=="Cook40"){
 trait <- Cooking_traits[5]
@@ -175,10 +175,13 @@ trait <- Cooking_traits[5]
  
   set.seed(2304)
   modelFit1[[5]] <- train(Cook40 ~ ., data = training2, 
-                     method = "xgbLinear", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
 save(testing,modelFit1, 
-     file = here::here("output", "XGB_ASD_Model_Cook40.RData"))
+     file = here::here("output", "RF_ASD_Model_Cook40.RData"))
 }
 ```
+
+
+
 

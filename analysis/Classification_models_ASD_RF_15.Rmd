@@ -22,11 +22,12 @@ library(gt)
 ###load data
 ```{r}
 NIR <- "ASD"
+TRAIT <- "Cook15"
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 modelFit1 <- list()
 
-load(file=here::here("output","dadosASD_Mas_PT.RData"))
-dados1 <- dados2[[7]]
+load(file=here::here("output","dados1_ASD_Mas_PT.RData"))
+
 ```
 
 ### test using PLS model
@@ -37,35 +38,40 @@ ctrl <- trainControl(method="repeatedcv",repeats = 5,
                      verboseIter = FALSE,returnResamp = "all") 
 ```
 
-### Model KNN - Cook15
+### Model parRF - Cook15
 ```{r}
-trait <- Cooking_traits[1]
-
-  set.seed(1)
-  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
-  training <- dados1[index, ]
-  testing <- dados1[-index, ]
-  
-  OvSam <- subset(training,training[,trait]=="Yes")
-  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
-  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
-  x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
-  training1 <- rbind(training,x,OvSam[sample1,])#,OvSam[sample1,])
-  table(training1$Cook15)
-  
-  training2 <- cbind(training1[,trait],
-                training1[,c(13:ncol(training1))])
-  colnames(training2)[1] <- trait
-  
-  set.seed(2304)
-  modelFit1[[1]] <- train(Cook15 ~ ., data = training2, 
-                     method = "knn", trControl = ctrl, 
-                     preProcess = c("center","scale"))
-
+ if(TRAIT=="Cook15"){
+ trait <- Cooking_traits[1]
+ 
+   set.seed(1)
+   index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+   training <- dados1[index, ]
+   testing <- dados1[-index, ]
+   
+   OvSam <- subset(training,training[,trait]=="Yes")
+   Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
+   sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+   x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+   training1 <- rbind(training,x,OvSam[sample1,])#,OvSam[sample1,])
+   table(training1$Cook15)
+   
+   training2 <- cbind(training1[,trait],
+                 training1[,c(13:ncol(training1))])
+   colnames(training2)[1] <- trait
+   
+   set.seed(2304)
+   modelFit1[[1]] <- train(Cook15 ~ ., data = training2, 
+                      method = "parRF", trControl = ctrl, 
+                      preProcess = c("center","scale"))
+ 
+ save(testing,modelFit1, 
+      file = here::here("output", "RF_ASD_Model_Cook15.RData"))
+ }
 ```
 
-### Model KNN - Cook20
+### Model parRF - Cook20
 ```{r}
+if(TRAIT=="Cook20"){
 trait <- Cooking_traits[2]
 
   set.seed(1)
@@ -84,13 +90,17 @@ trait <- Cooking_traits[2]
   
   set.seed(2304)
   modelFit1[[2]] <- train(Cook20 ~ ., data = training2, 
-                     method = "knn", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
 
+save(testing,modelFit1, 
+     file = here::here("output", "RF_ASD_Model_Cook20.RData"))
+}
 ```
 
-### Model KNN - Cook25
+### Model parRF - Cook25
 ```{r}
+if(TRAIT=="Cook25"){
 trait <- Cooking_traits[3]
 
   set.seed(1)
@@ -109,13 +119,16 @@ trait <- Cooking_traits[3]
   
   set.seed(2304)
   modelFit1[[3]] <- train(Cook25 ~ ., data = training2, 
-                     method = "knn", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
-
+save(testing,modelFit1, 
+     file = here::here("output", "RF_ASD_Model_Cook25.RData"))
+}
 ```
 
-### Model KNN - Cook30
+### Model parRF - Cook30
 ```{r}
+if(TRAIT=="Cook30"){
 trait <- Cooking_traits[4]
 
   set.seed(1)
@@ -134,14 +147,17 @@ trait <- Cooking_traits[4]
  
   set.seed(2304)
   modelFit1[[4]] <- train(Cook30 ~ ., data = training2, 
-                     method = "knn", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
-
+save(testing,modelFit1, 
+     file = here::here("output", "RF_ASD_Model_Cook30.RData"))
+}
 ```
 
 
-### Model KNN - Cook40
+### Model parRF - Cook40
 ```{r}
+if(TRAIT=="Cook40"){
 trait <- Cooking_traits[5]
 
   set.seed(1)
@@ -160,54 +176,13 @@ trait <- Cooking_traits[5]
  
   set.seed(2304)
   modelFit1[[5]] <- train(Cook40 ~ ., data = training2, 
-                     method = "knn", trControl = ctrl, 
+                     method = "parRF", trControl = ctrl, 
                      preProcess = c("center","scale"))
-```
-
-
-### Save data
-```{r}
 save(testing,modelFit1, 
-     file = here::here("output", "KNN_ASD_Model_Binarias.RData"))
+     file = here::here("output", "RF_ASD_Model_Cook40.RData"))
+}
 ```
 
 
 
-### script com for
-```{r,eval=FALSE}
-dados1 <- dados2[[7]]
-trait <- Cooking_traits[1]
-training <- list()
-training1 <- list()
-testing <- list()
-index <- list()
-modelFit1 <- list()
-modelFit2 <- list()
-training2 <- list()
-
-i = 1
-#for (i in 1:5) {
-  set.seed(1)
-  index[[i]] <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
-  training[[i]] <- dados1[index[[i]], ]
-  testing[[i]] <- dados1[-index[[i]], ]
-  
-  OvSam <- subset(training[[i]],training[[i]][,trait]=="Yes")
-  Ns <- round(table(training[[i]][,trait])[1]) - (nrow(OvSam)*26) 
-  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
-  x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
-  training1[[i]] <- rbind(training[[i]],x,OvSam[sample1,])#,OvSam[sample1,])
-  table(training1[[i]]$Cook15)
-  
-  training2[[i]] <- cbind(training1[[i]][,trait],
-                          training1[[i]][,c(13:ncol(training1[[i]]))])
-  colnames(training2[[i]])[1] <- trait
-  
-  set.seed(2304)
-  modelFit1 <- train(Cook15 ~ ., data = training2[[i]], 
-                     method = "knn", trControl = ctrl, 
-                     preProcess = c("center","scale"))
-#  }
-#modelFit2[[j]] <- modelFit1[[i]]
-```
 

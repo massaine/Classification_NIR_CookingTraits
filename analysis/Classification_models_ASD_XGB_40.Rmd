@@ -26,8 +26,7 @@ TRAIT <- "Cook40"
 Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
 modelFit1 <- list()
 
-load(file=here::here("output","dadosASD_Mas_PT.RData"))
-dados1 <- dados2[[7]]
+load(file=here::here("output","dados1_ASD_Mas.RData"))
 ```
 
 ### test using PLS model
@@ -181,5 +180,9 @@ trait <- Cooking_traits[5]
 save(testing,modelFit1, 
      file = here::here("output", "XGB_ASD_Model_Cook40.RData"))
 }
+```
+
+```{r}
+
 ```
 
