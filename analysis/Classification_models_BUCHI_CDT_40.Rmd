@@ -1,0 +1,187 @@
+---
+title: "Classification_models"
+author: "massaine"
+date: "2022-11-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(prospectr)
+library(caret)
+library(mlbench)
+library(pROC)
+library(stringr)
+library("ROCR")
+library(gt)
+```
+
+###load data
+```{r}
+NIR <- "BUCHI"
+TRAIT <- "Cook40"
+Cooking_traits <- c("Cook15","Cook20","Cook25","Cook30","Cook40")
+modelFit1 <- list()
+
+load(file=here::here("output","dados1_BUCHI_Mas_PT.RData"))
+```
+
+### test using PLS model
+```{r}
+ctrl <- trainControl(method="repeatedcv",repeats = 5,
+                     summaryFunction=twoClassSummary, 
+                     classProbs=T, savePredictions = T,
+                     verboseIter = FALSE,returnResamp = "all") 
+```
+
+### Model C5.0 - Cook15
+```{r}
+ if(TRAIT=="Cook15"){
+ trait <- Cooking_traits[1]
+ 
+   set.seed(1)
+   index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+   training <- dados1[index, ]
+   testing <- dados1[-index, ]
+   
+   OvSam <- subset(training,training[,trait]=="Yes")
+   Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*26) 
+   sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+   x <- do.call(rbind, replicate(25, OvSam, simplify=FALSE))
+   training1 <- rbind(training,x,OvSam[sample1,])#,OvSam[sample1,])
+   table(training1$Cook15)
+   
+   training2 <- cbind(training1[,trait],
+                 training1[,c(13:ncol(training1))])
+   colnames(training2)[1] <- trait
+   
+   set.seed(2304)
+   modelFit1[[1]] <- train(Cook15 ~ ., data = training2, 
+                      method = "C5.0", trControl = ctrl, 
+                      preProcess = c("center","scale"))
+ 
+ save(testing,modelFit1, 
+      file = here::here("output", "CDT_BUCHI_Model_Cook15.RData"))
+ }
+```
+
+### Model C5.0 - Cook20
+```{r}
+if(TRAIT=="Cook20"){
+trait <- Cooking_traits[2]
+
+  set.seed(1)
+  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+  training <- dados1[index, ]
+  testing <- dados1[-index, ]
+  
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*9) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(8, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook20)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  
+  set.seed(2304)
+  modelFit1[[2]] <- train(Cook20 ~ ., data = training2, 
+                     method = "C5.0", trControl = ctrl, 
+                     preProcess = c("center","scale"))
+
+save(testing,modelFit1, 
+     file = here::here("output", "CDT_BUCHI_Model_Cook20.RData"))
+}
+```
+
+### Model C5.0 - Cook25
+```{r}
+if(TRAIT=="Cook25"){
+trait <- Cooking_traits[3]
+
+  set.seed(1)
+  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+  training <- dados1[index, ]
+  testing <- dados1[-index, ]
+  
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*4) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(3, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook25)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+  
+  set.seed(2304)
+  modelFit1[[3]] <- train(Cook25 ~ ., data = training2, 
+                     method = "C5.0", trControl = ctrl, 
+                     preProcess = c("center","scale"))
+save(testing,modelFit1, 
+     file = here::here("output", "CDT_BUCHI_Model_Cook25.RData"))
+}
+```
+
+### Model C5.0 - Cook30
+```{r}
+if(TRAIT=="Cook30"){
+trait <- Cooking_traits[4]
+
+  set.seed(1)
+  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+  training <- dados1[index, ]
+  testing <- dados1[-index, ]
+  
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*3) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(2, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook30)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+ 
+  set.seed(2304)
+  modelFit1[[4]] <- train(Cook30 ~ ., data = training2, 
+                     method = "C5.0", trControl = ctrl, 
+                     preProcess = c("center","scale"))
+save(testing,modelFit1, 
+     file = here::here("output", "CDT_BUCHI_Model_Cook30.RData"))
+}
+```
+
+
+### Model C5.0 - Cook40
+```{r}
+if(TRAIT=="Cook40"){
+trait <- Cooking_traits[5]
+
+  set.seed(1)
+  index <- createDataPartition(dados1[,trait], p = .75, list = FALSE)
+  training <- dados1[index, ]
+  testing <- dados1[-index, ]
+  
+  OvSam <- subset(training,training[,trait]=="Yes")
+  Ns <- round(table(training[,trait])[1]) - (nrow(OvSam)*2) 
+  sample1 <- sample(x = c(1:nrow(OvSam)), size = Ns, replace = TRUE)
+  x <- do.call(rbind, replicate(1, OvSam, simplify=FALSE))
+  training1 <- rbind(training,x, OvSam[sample1,] )# ,OvSam[sample1,])
+  table(training1$Cook40)
+  training2 <- cbind(training1[,trait],training1[,c(13:ncol(training1))])
+  colnames(training2)[1] <- trait
+ 
+  set.seed(2304)
+  modelFit1[[5]] <- train(Cook40 ~ ., data = training2, 
+                     method = "C5.0", trControl = ctrl, 
+                     preProcess = c("center","scale"))
+save(testing,modelFit1, 
+     file = here::here("output", "CDT_BUCHI_Model_Cook40.RData"))
+}
+```
+
+
+
+
